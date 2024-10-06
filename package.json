@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "serve" : "serve -s dist -l 80"
+    "serve" : "serve -s dist -l 5173"
   },
   "dependencies": {
     "pinia": "^2.1.7",
