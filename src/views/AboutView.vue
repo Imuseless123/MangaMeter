@@ -22,7 +22,7 @@
 
 <script>
 import axios from "axios";
-
+const apiUrl = import.meta.env.VITE_API_URL;
 export default {
   data() {
     return {
@@ -36,10 +36,10 @@ export default {
   methods: {
     async fetchGenres() {
       try {
-        const baseUrl = 'http://localhost:3000';
+        console.log(apiUrl);
         const response = await axios({
             method: 'GET',
-            url: `${baseUrl}/genres`
+            url: `${apiUrl}/genres`
         });// Adjust URL as per your API
         this.genres = response.data; // Store the API response in genres
       } catch (error) {
