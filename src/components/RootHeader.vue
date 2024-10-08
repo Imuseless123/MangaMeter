@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <div class="header">
     <div class="container">
       <h1 class="title">MangaMeter</h1>
       <nav class="navigation">
@@ -12,7 +12,7 @@
         <button label="Sign Up" @click="openSignup" class="p-button-outlined" />
       </div>
     </div>
-  </header>
+  </div>
 </template>
 
 <script setup>
@@ -30,14 +30,12 @@ function openSignup() {
 
 <style scoped>
 .header {
-  position: fixed; /* Sticks the header to the top */
   top: 0;
   left: 0;
   width: 100%; /* Full width */
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #ccc;
   z-index: 1000; /* Ensures the header stays above other content */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for a subtle effect */
+  background-color: aqua;
 }
 
 .container {
