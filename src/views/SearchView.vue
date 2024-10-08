@@ -3,20 +3,70 @@
     <div class="left-half">
       <div class="search-container">
         <input type="text" placeholder="Search..." class="search-bar" />
-          <div class="rectangle-list">
-            <div class="rectangle">Item 1</div>
-            <div class="rectangle">Item 2</div>
-            <div class="rectangle">Item 3</div>
-            <!-- Add more rectangles as needed -->
-          </div>
+        <div class="rectangle-list">
+          <MangaSearchEntry 
+            v-for="(manga, index) in mangas" 
+            :key="index" 
+            :name="manga.title" 
+            :image="manga.image" 
+            :genres="manga.genres" 
+          />
+        </div>
       </div>
-      
     </div>
     <div class="right-half">Right Half</div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
+import MangaSearchEntry from '../components/MangaSearchEntry.vue';
+
+// Sample data for rectangle items
+// Sample manga data
+const mangas = ref([
+  {
+    title: "Example Manga 1",
+    image: "path/to/placeholder-image1.jpg", // Add your image path here
+    genres: ['Action', 'Adventure']
+  },
+  {
+    title: "Example Manga 2",
+    image: "path/to/placeholder-image2.jpg",
+    genres: ['Fantasy', 'Drama']
+  },
+  {
+    title: "Example Manga 3",
+    image: "path/to/placeholder-image3.jpg",
+    genres: ['Comedy', 'Slice of Life']
+  },
+  {
+    title: "Example Manga 3",
+    image: "path/to/placeholder-image3.jpg",
+    genres: ['Comedy', 'Slice of Life']
+  },
+  {
+    title: "Example Manga 3",
+    image: "path/to/placeholder-image3.jpg",
+    genres: ['Comedy', 'Slice of Life']
+  },
+  {
+    title: "Example Manga 3",
+    image: "path/to/placeholder-image3.jpg",
+    genres: ['Comedy', 'Slice of Life']
+  },
+  {
+    title: "Example Manga 3",
+    image: "path/to/placeholder-image3.jpg",
+    genres: ['Comedy', 'Slice of Life']
+  },
+  {
+    title: "Example Manga 3",
+    image: "path/to/placeholder-image3.jpg",
+    genres: ['Comedy', 'Slice of Life']
+  },
+  // Add more manga entries as needed
+]);
 </script>
 
 <style scoped>
@@ -24,20 +74,15 @@
   display: flex;
   height: 100%; 
 }
-.search-container{
-  height: 80%;
-  width: 80%;
-  background-color: red;
-}
 
 .left-half {
   flex: 1; /* Takes 50% of the container */
   background-color: lightblue; /* Change to your desired color */
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  
+  align-items: flex-start; /* Align items to the top */
+  justify-content: center; /* Center horizontally */
+  padding: 40px; /* Add padding */
+  box-sizing: border-box; /* Include padding in the total width/height */
 }
 
 .right-half {
@@ -47,28 +92,32 @@
   align-items: center;
   justify-content: center;
 }
-.search-bar{
+
+.search-container {
   width: 100%;
-  height: 40px;
-  border: 0px;
-  padding: 0px;
-  border-radius: 6px;
-}
-.rectangle-list {
-  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px; /* Space between rectangles */
+  gap: 20px; /* Space between search bar and rectangles */
 }
 
-.rectangle {
-  height: 50px;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
+.search-bar {
+  width: 100%;
+  height: 60px;
+  border: 0px;
+  padding: 0px;
+  border-radius: 10px;
 }
+
+.rectangle-list {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto; /* Enables vertical scrolling */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+
 </style>
