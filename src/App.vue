@@ -5,6 +5,5 @@ import Header from './components/RootHeader.vue' // Adjust the path as necessary
 
 <template>
   <Header />
-
   <RouterView />
 </template>

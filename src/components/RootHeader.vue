@@ -3,8 +3,9 @@
     <div class="container">
       <h1 class="title">MangaMeter</h1>
       <nav class="navigation">
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/database">Database</RouterLink>
+        <RouterLink to="/">HomePage</RouterLink>
+        <RouterLink to="/search">Search</RouterLink>
+        <RouterLink to="/leaderboard">Leaderboard</RouterLink>
       </nav>
       <div class="auth-buttons">
         <button label="Login" @click="openLogin" class="p-button-outlined" />
