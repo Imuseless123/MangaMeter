@@ -1,0 +1,32 @@
+:root{
+/** Dark theme primary colors */
+--color-primary-a0: #d89831;
+--color-primary-a10: #dea34a;
+--color-primary-a20: #e4ae61;
+--color-primary-a30: #eab977;
+--color-primary-a40: #efc58e;
+--color-primary-a50: #f3d0a4;
+
+/** Dark theme surface colors */
+--color-surface-a0: #121212;
+--color-surface-a10: #282828;
+--color-surface-a20: #3f3f3f;
+--color-surface-a30: #575757;
+--color-surface-a40: #717171;
+--color-surface-a50: #8b8b8b;
+
+/** Dark theme mixed surface colors */
+--color-surface-mixed-a0: #241e17;
+--color-surface-mixed-a10: #39332c;
+--color-surface-mixed-a20: #4f4943;
+--color-surface-mixed-a30: #65605b;
+--color-surface-mixed-a40: #7d7974;
+--color-surface-mixed-a50: #96928e;
+
+}
+
+ /** Examples */ 
+.bg-primary {
+ color: var(--color-primary-a50); 
+ background-color: var(--color-surface-a0); 
+}
