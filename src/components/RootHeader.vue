@@ -1,21 +1,57 @@
 <template>
   <div class="header">
     <div class="container">
-      <h1 class="title">MangaMeter</h1>
+      <div class="title">
+        <h1 class="logo font_roboto" @click="openHomePage">MangaMeter</h1>
+      </div>
       <nav class="navigation">
-        <RouterLink to="/">HomePage</RouterLink>
-        <RouterLink to="/search">Search</RouterLink>
-        <RouterLink to="/leaderboard">Leaderboard</RouterLink>
+        <div>
+          <RouterLink id="homeLink" class="text font_roboto" @click="navigating($event)" to="/">HomePage</RouterLink>
+        </div>
+        <div>
+          <RouterLink id="searchLink" class="text font_roboto" @click="navigating($event)" to="/search">Search</RouterLink>
+        </div>
+        <div>
+          <RouterLink id="leaderboardLink" class="text font_roboto" @click="navigating($event)" to="/leaderboard">Leaderboard</RouterLink>
+        </div>
       </nav>
       <div class="auth-buttons">
-        <button label="Login" @click="openLogin" class="p-button-outlined" />
-        <button label="Sign Up" @click="openSignup" class="p-button-outlined" />
+        <div class="opacity">
+          <button label="Login font_roboto" @click="openLogin" class="p-button-outlined" >Login</button>
+        </div>
+        <div class="opacity">
+          <button label="Sign Up font_roboto" @click="openSignup" class="p-button-outlined" >Sign Up</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
+import { ref, onMounted } from 'vue'
+
+// Create references for the links using Vue's `ref` function
+var homeLink;
+var searchLink;
+var leaderboardLink;
+
+onMounted(() => {
+  homeLink = document.getElementById('homeLink');
+  searchLink = document.getElementById('searchLink');
+  leaderboardLink = document.getElementById('leaderboardLink');
+})
+
+function navigating(event){
+  resetNavigate();
+  event.target.style.backgroundColor = 'rgba(185, 139, 70, 0.5)';
+}
+
+// Function to reset the styles of all the links
+function resetNavigate() {
+  homeLink.style.backgroundColor = '';
+  searchLink.style.backgroundColor = '';
+  leaderboardLink.style.backgroundColor = '';
+}
 
 function openLogin() {
   // Logic to open the login popup
@@ -26,9 +62,17 @@ function openSignup() {
   // Logic to open the signup popup
   console.log('Sign Up button clicked');
 }
+
+function openHomePage(){
+  console.log('Logo clicked');
+}
 </script>
 
 <style scoped>
+.font_roboto{
+  font-family: 'Roboto', sans-serif;
+}
+
 .header {
   top: 0;
   left: 0;
@@ -39,26 +83,61 @@ function openSignup() {
 }
 
 .container {
+  width: 100%;
+  height: 100%;
+  background-color: #1E1E1E;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  max-width: 1200px; /* Optional max width */
   margin: 0 auto; /* Centers the content inside the header */
+  padding: 10px 20px;
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: bold;
+  .logo{
+    color: #FFFFFF;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
 }
 
 .navigation {
   display: flex;
   gap: 1rem;
+  .text{
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 5px;
+  }
+
+  .text:hover{
+    background-color: rgba(185, 139, 70, 0.5);
+  }
 }
 
 .auth-buttons {
+  padding-right: 40px;
   display: flex;
   gap: 0.5rem;
+  .opacity{
+    background-color: #b98b46;
+    border-radius: 5px;
+
+    .p-button-outlined{
+      font-size: 18px;
+      color: #1E1E1E;
+      width: 100px;
+      height: 40px;
+      background-color: transparent;
+      cursor: pointer;
+      border: none;
+  }
+  }
+
+  .opacity:active{
+    opacity: 0.5;
+  }
 }
 </style>
