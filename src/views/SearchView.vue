@@ -26,9 +26,9 @@ import MangaSearchEntry from '../components/MangaSearchEntry.vue';
 // Sample manga data
 const mangas = ref([
   {
-    title: "Example Manga 1",
+    title: "Example Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga Manga 1",
     image: "path/to/placeholder-image1.jpg", // Add your image path here
-    genres: ['Action', 'Adventure']
+    genres: ['Action', 'Adventure','genre','genre','genre','genre','genre','genre','genre','genre','genre']
   },
   {
     title: "Example Manga 2",
