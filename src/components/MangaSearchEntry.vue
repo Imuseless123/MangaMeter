@@ -1,6 +1,8 @@
 <template>
   <div class="manga-entry-container">
-    <img :src="image" alt="Manga cover" class="manga-image" />
+    <div class="image-container">
+      <img :src="image" alt="Manga cover" class="manga-image" />
+    </div>
     <div class="manga-details">
       <div class="manga-title">{{ name }}</div>
       <div class="manga-genres">
@@ -43,10 +45,20 @@ defineProps({
   flex-shrink: 0; /* Prevent shrinking */
 }
 
-.manga-image {
-  width: 60px; /* Adjust width as needed */
-  height: auto; /* Maintain aspect ratio */
+.image-container {
+  width: 126px; /* 12 units */
+  height: 180px; /* 17 units */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Hide overflow to maintain the aspect ratio */
   margin-right: 16px; /* Space between image and details */
+}
+
+.manga-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain; /* Maintain aspect ratio of the image */
 }
 .manga-details {
   display: flex;
