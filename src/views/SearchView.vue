@@ -2,14 +2,20 @@
   <div class="container">
     <div class="left-half">
       <div class="search-container">
-        <input type="text" placeholder="Search..." class="search-bar" />
+        <input 
+          type="text" 
+          placeholder="Search..." 
+          class="search-bar" 
+          v-model="searchTerm" 
+          @keyup.enter="fetchMangas"
+        />
         <div class="rectangle-list">
           <MangaSearchEntry 
             v-for="(manga, index) in mangas" 
             :key="index" 
-            :name="manga.title" 
-            :image="manga.image" 
-            :genres="manga.genres" 
+            :name="manga.mangaName" 
+            :image="`https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`" 
+            :genres="manga.genreTags" 
           />
         </div>
       </div>
@@ -21,42 +27,35 @@
 <script setup>
 import { ref } from 'vue';
 import MangaSearchEntry from '../components/MangaSearchEntry.vue';
+import axios from 'axios';
 
-// Sample data for rectangle items
-// Sample manga data
-const mangas = ref([
-  {
-    title: "Example Manga 1",
-    image: "https://uploads.mangadex.org/covers/6cf12805-6bdb-441f-90dc-facd8e85d5fa/95c7ae69-8d57-45fc-ac43-52103e522d31.png", // Add your image path here
-    genres: ['Action', 'Adventure']
-  },
-  {
-    title: "Example Manga 2",
-    image: "https://uploads.mangadex.org/covers/8f22b5ff-2d76-4f5d-9b35-7969de2dc66d/75f5dc12-b04c-4ced-b9ae-2358615fea2e.png",
-    genres: ['Fantasy', 'Drama']
-  },
-  {
-    title: "Example Manga 3",
-    image: "",
-    genres: ['Comedy', 'Slice of Life']
-  },
-  {
-    title: "Example Manga 3",
-    image: "",
-    genres: ['Comedy', 'Slice of Life']
-  },
-  {
-    title: "Example Manga 3",
-    image: "",
-    genres: ['Comedy', 'Slice of Life']
-  },
-  {
-    title: "Example Manga 3",
-    image: "g",
-    genres: ['Comedy', 'Slice of Life']
-  },
-  // Add more manga entries as needed
-]);
+// Reactive reference to store manga details
+const mangas = ref([]);
+
+// Reactive reference for the search term
+const searchTerm = ref('');
+
+// Function to fetch mangas from the backend
+const fetchMangas = async () => {
+  if (!searchTerm.value.trim()) return; // Exit if search term is empty
+  
+  try {
+    // Make a GET request to the backend API
+    const response = await axios.get(`http://localhost:3000/searchTitle/`, {
+      params: {
+        title: searchTerm.value,
+        limit: 5,
+        page: 1,
+        order: 'desc'
+      }
+    });
+
+    // Update the mangas array with the response data
+    mangas.value = response.data;
+  } catch (error) {
+    console.error("Error fetching manga:", error);
+  }
+};
 </script>
 
 <style scoped>
