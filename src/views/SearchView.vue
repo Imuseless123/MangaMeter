@@ -66,7 +66,7 @@ const fetchMangas = async () => {
 
 .left-half {
   flex: 1; /* Takes 50% of the container */
-  background-color: lightblue; /* Change to your desired color */
+  background-color: #1E1E1E; /* Change to your desired color */
   display: flex;
   align-items: flex-start; /* Align items to the top */
   justify-content: center; /* Center horizontally */
@@ -92,9 +92,9 @@ const fetchMangas = async () => {
 
 .search-bar {
   width: 100%;
-  height: 60px;
+  height: 40px;
   border: 0px;
-  padding: 0px;
+  padding-left: 10px;
   border-radius: 10px;
 }
 
@@ -105,6 +105,7 @@ const fetchMangas = async () => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding-right: 15px;
 }
 
 

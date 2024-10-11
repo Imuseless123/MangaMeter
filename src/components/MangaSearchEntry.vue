@@ -3,7 +3,7 @@
     <div class="image-container">
       <img :src="image" alt="Manga cover" class="manga-image" />
     </div>
-    <div class="manga-details">
+    <div class="manga-details font_roboto">
       <div class="manga-title">
         {{ name }}
       </div>
@@ -35,9 +35,13 @@ defineProps({
 </script>
 
 <style scoped>
+.font_roboto{
+  font-family: 'Roboto', sans-serif;
+}
+
 .manga-entry-container {
   height: 180px; /* Fixed height for rectangles */
-  background-color: #181818;
+  background-color: #313131;
   border: 1px solid #ccc;
   border-radius: 4px;
   display: flex;
@@ -48,13 +52,14 @@ defineProps({
 }
 
 .image-container {
-  width: 126px; /* 12 units */
-  height: 180px; /* 17 units */
+  width: 100px; /* 12 units */
+  height: 150px; /* 17 units */
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden; /* Hide overflow to maintain the aspect ratio */
   margin-right: 16px; /* Space between image and details */
+  border-radius: 10px;
 }
 
 .manga-image {
