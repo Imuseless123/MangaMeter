@@ -23,10 +23,6 @@
 --color-surface-mixed-a40: #7d7974;
 --color-surface-mixed-a50: #96928e;
 
-}
+--background-dark: #010104;
 
- /** Examples */ 
-.bg-primary {
- color: var(--color-primary-a50); 
- background-color: var(--color-surface-a0); 
 }

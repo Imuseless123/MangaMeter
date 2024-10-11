@@ -1,5 +1,9 @@
 <template>
-  <div class="manga-entry-container">
+  <div class="manga-entry-container"
+        @click="toggleSelected" 
+       :class="{ 'selected': isSelected }">
+    
+    
     <div class="image-container">
       <img :src="image" alt="Manga cover" class="manga-image" />
     </div>
@@ -11,11 +15,17 @@
         <span v-for="(genre, index) in genres" :key="index" class="genre">{{ genre }}</span>
       </div>
     </div>
+    <div class="blobs_container">
+      <div v-for="(color, index) in blobColors" :key="index" class="blob" 
+         :style="{ left: `${Math.random() * 40}%`, top: `${Math.random() * 100}%`, background: color }">
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps } from 'vue';
+import { ref } from 'vue';
 
 // Define props
 defineProps({
@@ -32,6 +42,22 @@ defineProps({
     required: true,
   },
 });
+// Function to get a random RGBA color
+function getRandomColor() {
+  const randomValue = () => Math.floor(Math.random() * 256);
+  return `rgba(${randomValue()}, ${randomValue()}, ${randomValue()}, 0.5)`;
+}
+
+// Create an array of random colors for the blobs
+const blobColors = ref(Array.from({ length: 3 }, getRandomColor));
+
+// Track selection state
+const isSelected = ref(false);
+
+// Toggle the selected state
+function toggleSelected() {
+  isSelected.value = !isSelected.value;
+}
 </script>
 
 <style scoped>
@@ -40,21 +66,70 @@ defineProps({
 }
 
 .manga-entry-container {
+  position: relative; /* Make sure the container is the reference point */
   height: 180px; /* Fixed height for rectangles */
-  background-color: #313131;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  background-color: var(--color-surface-a0);
+  border-radius: 10px;
   display: flex;
   align-items: center;
+  /* z-index: -2;  */
   padding: 16px; /* Add some padding */
   box-sizing: border-box;
   flex-shrink: 0; /* Prevent shrinking */
+  overflow: hidden; /* Clip the background blur to fit inside the container's border radius */
+}
+.manga-entry-container.selected {
+  transform: scale(1.05); /* Slightly grow the container */
+}
+.manga-entry-container:hover .blobs_container {
+  opacity: 1; /* Show blobs on hover */
+}
+.blobs_container {
+  position: absolute;
+  height: 200%; 
+  aspect-ratio: 1/1;
+  left: 70%;
+  pointer-events: none; /* Prevent interaction with the blobs */
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.3s; /* Smooth transition for visibility */
 }
 
+.manga-entry-container:hover .blobs_container {
+  opacity: 1; /* Show blobs on hover */
+}
+
+.blob {
+  position: absolute;
+  opacity: 0.5;
+  width: 200px; /* Adjust size as needed */
+  aspect-ratio: 1/1;
+  animation: rotate 10s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+  filter: blur(40px);
+  z-index: 0;
+  left: calc(100% - 100px); /* Position it to the right side, adjust as needed */
+  top: 50%; /* Center vertically */
+  transform: translateY(-50%); /* Adjust for perfect vertical centering */
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+    border-radius: 60% 40% 30% 70% / 100% 85% 92% 74%;
+  }
+  50% {
+    transform: rotate(180deg);
+    border-radius: 20% 71% 47% 70% / 81% 15% 22% 54%;
+  }
+  100% {
+    transform: rotate(360deg);
+    border-radius: 100% 75% 92% 74% / 60% 80% 30% 70%;
+  }
+}
 .image-container {
   width: 100px; /* 12 units */
   height: 150px; /* 17 units */
   display: flex;
+  z-index: 1; 
   justify-content: center;
   align-items: center;
   overflow: hidden; /* Hide overflow to maintain the aspect ratio */
@@ -72,6 +147,7 @@ defineProps({
   height: 100%;
   display: flex;
   flex-direction: column;
+  z-index: 1; 
   /* background-color: aqua; */
 }
 
@@ -84,6 +160,7 @@ defineProps({
   -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1) 75%, rgba(0, 0, 0, 0)); /* For Safari */
   overflow: hidden;
   white-space: nowrap;  
+  z-index: 1; 
 }
 
 .manga-genres {
@@ -92,6 +169,7 @@ defineProps({
   flex-wrap: wrap; /* Allow genres to wrap if needed */
   gap: 4px; /* Space between genres */
   /* background-color: bisque; */
+  z-index: 1; 
 }
 
 .genre {

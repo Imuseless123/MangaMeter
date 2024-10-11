@@ -28,7 +28,7 @@ body, html {
   display: flex;
   flex-direction: column;
   height: 100%; /* Full height of the parent, which is 100vh */
-  background-color: #121212;
+  background-color: var(--background-dark);
 }
 
 .header {
