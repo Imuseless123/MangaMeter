@@ -4,7 +4,9 @@
       <img :src="image" alt="Manga cover" class="manga-image" />
     </div>
     <div class="manga-details">
-      <div class="manga-title">{{ name }}</div>
+      <div class="manga-title">
+        {{ name }}
+      </div>
       <div class="manga-genres">
         <span v-for="(genre, index) in genres" :key="index" class="genre">{{ genre }}</span>
       </div>
@@ -35,7 +37,7 @@ defineProps({
 <style scoped>
 .manga-entry-container {
   height: 180px; /* Fixed height for rectangles */
-  background-color: rgb(44, 218, 160);
+  background-color: #181818;
   border: 1px solid #ccc;
   border-radius: 4px;
   display: flex;
@@ -61,18 +63,30 @@ defineProps({
   object-fit: contain; /* Maintain aspect ratio of the image */
 }
 .manga-details {
+  width: 500px;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  /* background-color: aqua; */
 }
+
 .manga-title {
   font-size: 16px;
   font-weight: bold;
+  color: #FFFFFF;
+  padding-bottom: 11px;
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1) 75%, rgba(0, 0, 0, 0)); /* Fades out at the end */
+  -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1) 75%, rgba(0, 0, 0, 0)); /* For Safari */
+  overflow: hidden;
+  white-space: nowrap;  
 }
 
 .manga-genres {
+  height: auto;
   display: flex;
   flex-wrap: wrap; /* Allow genres to wrap if needed */
   gap: 4px; /* Space between genres */
+  /* background-color: bisque; */
 }
 
 .genre {
