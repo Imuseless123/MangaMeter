@@ -79,13 +79,13 @@ function openHomePage(){
   width: 100%; /* Full width */
   z-index: 1000; /* Ensures the header stays above other content */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for a subtle effect */
-  background-color: aqua;
+  /* background-color: aqua; */
 }
 
 .container {
   width: 100%;
   height: 100%;
-  background-color: #1E1E1E;
+  /* background-color: #1E1E1E; */
   display: flex;
   justify-content: space-between;
   align-items: center;

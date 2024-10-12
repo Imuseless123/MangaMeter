@@ -66,7 +66,7 @@ const fetchMangas = async () => {
 
 .left-half {
   flex: 1; /* Takes 50% of the container */
-  background-color: #1E1E1E; /* Change to your desired color */
+  /* background-color: #1E1E1E; */
   display: flex;
   align-items: flex-start; /* Align items to the top */
   justify-content: center; /* Center horizontally */
