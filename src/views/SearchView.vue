@@ -96,6 +96,8 @@ const fetchMangas = async () => {
   border: 0px;
   padding-left: 10px;
   border-radius: 10px;
+  background: linear-gradient(to right, #521414 0%, #3E240F 53%, #A6721F 100%);
+  color: #FFFFFF;
 }
 
 .rectangle-list {
