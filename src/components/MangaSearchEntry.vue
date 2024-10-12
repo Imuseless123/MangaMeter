@@ -61,7 +61,7 @@ function toggleSelected() {
 </script>
 
 <style scoped>
-.font_roboto{
+.font_roboto {
   font-family: 'Roboto', sans-serif;
 }
 
@@ -72,18 +72,28 @@ function toggleSelected() {
   border-radius: 10px;
   display: flex;
   align-items: center;
-  /* z-index: -2;  */
   padding: 16px; /* Add some padding */
   box-sizing: border-box;
   flex-shrink: 0; /* Prevent shrinking */
   overflow: hidden; /* Clip the background blur to fit inside the container's border radius */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
+
+.manga-entry-container:hover {
+  background-color: var(--color-surface-a10); /* Brighten up the background color on hover */
+}
+
+/* Make sure blobs are always visible when selected */
+.manga-entry-container.selected .blobs_container {
+  opacity: 1; /* Keep blobs visible when the container is selected */
+}
+
+/* Remove the scaling effect when selected */
 .manga-entry-container.selected {
-  transform: scale(1.05); /* Slightly grow the container */
+  /* No scale transformation */
 }
-.manga-entry-container:hover .blobs_container {
-  opacity: 1; /* Show blobs on hover */
-}
+
+/* Ensure blobs are initially hidden and only appear when selected */
 .blobs_container {
   position: absolute;
   height: 200%; 
@@ -94,10 +104,7 @@ function toggleSelected() {
   transition: opacity 0.3s; /* Smooth transition for visibility */
 }
 
-.manga-entry-container:hover .blobs_container {
-  opacity: 1; /* Show blobs on hover */
-}
-
+/* Blobs will not change based on hover now */
 .blob {
   position: absolute;
   opacity: 0.5;
