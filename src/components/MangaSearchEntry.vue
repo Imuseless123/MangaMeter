@@ -77,6 +77,9 @@ function toggleSelected() {
   box-sizing: border-box;
   flex-shrink: 0; /* Prevent shrinking */
   overflow: hidden; /* Clip the background blur to fit inside the container's border radius */
+  box-shadow: -2.5px 2px 10px var(--color-surface-a40); 
+  margin-left: 10px;
+  margin-bottom: 15px;
 }
 .manga-entry-container.selected {
   transform: scale(1.05); /* Slightly grow the container */
@@ -84,6 +87,7 @@ function toggleSelected() {
 .manga-entry-container:hover .blobs_container {
   opacity: 1; /* Show blobs on hover */
 }
+
 .blobs_container {
   position: absolute;
   height: 200%; 
