@@ -96,6 +96,14 @@ const fetchMangas = async () => {
   border: 0px;
   padding-left: 10px;
   border-radius: 10px;
+  background: linear-gradient(to right, #521414 0%, #3E240F 53%, #A6721F 100%);
+  color: #FFFFFF;
+  outline: none; /* Removes the default outline */
+}
+
+.search-bar:focus{
+  outline: 2px solid #A6721F;
+  outline-offset: 2px;
 }
 
 .rectangle-list {
@@ -108,6 +116,14 @@ const fetchMangas = async () => {
   padding-right: 15px;
 }
 
+/* Custom scrollbar styling */
+.rectangle-list::-webkit-scrollbar {
+  width: 8px;
+}
 
+.rectangle-list::-webkit-scrollbar-thumb {
+  background-color: #A6721F;
+  border-radius: 10px;
+}
 
 </style>

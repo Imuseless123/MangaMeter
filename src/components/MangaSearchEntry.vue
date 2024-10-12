@@ -77,6 +77,9 @@ function toggleSelected() {
   flex-shrink: 0; /* Prevent shrinking */
   overflow: hidden; /* Clip the background blur to fit inside the container's border radius */
   transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  box-shadow: -2.5px 2px 10px var(--color-surface-a40); 
+  margin-left: 10px;
+  margin-bottom: 15px;
 }
 
 .manga-entry-container:hover {
