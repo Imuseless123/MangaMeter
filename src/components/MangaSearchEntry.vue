@@ -1,9 +1,9 @@
 <template>
-  <div class="manga-entry-container"
-        @click="toggleSelected" 
-       :class="{ 'selected': isSelected }">
-    
-    
+  <div 
+    class="manga-entry-container"
+    @click="handleClick" 
+    :class="{ 'selected': isSelected }"
+  >
     <div class="image-container">
       <img :src="image" alt="Manga cover" class="manga-image" />
     </div>
@@ -15,49 +15,35 @@
         <span v-for="(genre, index) in genres" :key="index" class="genre">{{ genre }}</span>
       </div>
     </div>
-    <div class="blobs_container">
+    <div class="blobs_container" :class="{ 'visible': isSelected }">
       <div v-for="(color, index) in blobColors" :key="index" class="blob" 
-         :style="{ left: `${Math.random() * 40}%`, top: `${Math.random() * 100}%`, background: color }">
+           :style="{ left: `${Math.random() * 40}%`, top: `${Math.random() * 100}%`, background: color }">
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineEmits } from 'vue';
 import { ref } from 'vue';
 
-// Define props
 defineProps({
-  name: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String,
-    required: true,
-  },
-  genres: {
-    type: Array,
-    required: true,
-  },
+  name: String,
+  image: String,
+  genres: Array,
+  isSelected: Boolean // New prop to determine if the entry is selected
 });
-// Function to get a random RGBA color
-function getRandomColor() {
+
+const emit = defineEmits(['selectManga']);
+
+const blobColors = ref(Array.from({ length: 3 }, () => {
   const randomValue = () => Math.floor(Math.random() * 256);
   return `rgba(${randomValue()}, ${randomValue()}, ${randomValue()}, 0.5)`;
-}
+}));
 
-// Create an array of random colors for the blobs
-const blobColors = ref(Array.from({ length: 3 }, getRandomColor));
-
-// Track selection state
-const isSelected = ref(false);
-
-// Toggle the selected state
-function toggleSelected() {
-  isSelected.value = !isSelected.value;
-}
+const handleClick = () => {
+  emit('selectManga'); // Emit the event when this component is clicked
+};
 </script>
 
 <style scoped>
@@ -77,7 +63,7 @@ function toggleSelected() {
   flex-shrink: 0; /* Prevent shrinking */
   overflow: hidden; /* Clip the background blur to fit inside the container's border radius */
   transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-  box-shadow: -2.5px 2px 10px var(--color-surface-a40); 
+  box-shadow: -2.5px 2px 6px var(--color-surface-a30); 
   margin-left: 10px;
   margin-bottom: 15px;
 }
@@ -89,11 +75,6 @@ function toggleSelected() {
 /* Make sure blobs are always visible when selected */
 .manga-entry-container.selected .blobs_container {
   opacity: 1; /* Keep blobs visible when the container is selected */
-}
-
-/* Remove the scaling effect when selected */
-.manga-entry-container.selected {
-  /* No scale transformation */
 }
 
 /* Ensure blobs are initially hidden and only appear when selected */

@@ -16,6 +16,8 @@
             :name="manga.mangaName" 
             :image="`https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`" 
             :genres="manga.genreTags" 
+            :isSelected="selectedMangaIndex === index" 
+            @selectManga="selectManga(index)"
           />
         </div>
       </div>
@@ -29,18 +31,14 @@ import { ref } from 'vue';
 import MangaSearchEntry from '../components/MangaSearchEntry.vue';
 import axios from 'axios';
 
-// Reactive reference to store manga details
 const mangas = ref([]);
-
-// Reactive reference for the search term
 const searchTerm = ref('');
+const selectedMangaIndex = ref(null); // Track the selected manga index
 
-// Function to fetch mangas from the backend
 const fetchMangas = async () => {
-  if (!searchTerm.value.trim()) return; // Exit if search term is empty
-  
+  if (!searchTerm.value.trim()) return;
+
   try {
-    // Make a GET request to the backend API
     const response = await axios.get(`http://localhost:3000/searchTitle/`, {
       params: {
         title: searchTerm.value,
@@ -50,14 +48,18 @@ const fetchMangas = async () => {
       }
     });
 
-    // Update the mangas array with the response data
     mangas.value = response.data;
+    selectedMangaIndex.value = null; // Reset selection when new data is fetched
   } catch (error) {
     console.error("Error fetching manga:", error);
   }
 };
-</script>
 
+// Function to update the selected manga index
+const selectManga = (index) => {
+  selectedMangaIndex.value = index;
+};
+</script>
 <style scoped>
 .container {
   display: flex;
