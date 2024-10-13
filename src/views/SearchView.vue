@@ -22,7 +22,33 @@
         </div>
       </div>
     </div>
-    <div class="right-half">Right Half</div>
+
+    <div class="right-half">
+      <template v-if="selectedManga">
+        <div class="manga-container">
+          <img :src="selectedManga.image" alt="Manga Cover" class="manga-image" />
+          <div class="overlay">
+            <div class="manga-info">
+              <h2>{{ selectedManga.name }}</h2>
+              <p><strong>Genres:</strong> {{ selectedManga.genres.join(', ') }}</p>
+              <p><strong>Overall:</strong> 7.9</p>
+              <p><strong>Action:</strong> 7.9</p>
+              <p><strong>Drama:</strong> 7.9</p>
+              <p><strong>Mystery:</strong> 7.9</p>
+            </div>
+            <div class="ratings">
+              <p>7</p>
+              <p>9</p>
+              <p>6</p>
+              <p>8</p>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <p>Select a manga to view its details.</p>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -34,6 +60,7 @@ import axios from 'axios';
 const mangas = ref([]);
 const searchTerm = ref('');
 const selectedMangaIndex = ref(null); // Track the selected manga index
+const selectedManga = ref(null);
 
 const fetchMangas = async () => {
   if (!searchTerm.value.trim()) return;
@@ -50,6 +77,7 @@ const fetchMangas = async () => {
 
     mangas.value = response.data;
     selectedMangaIndex.value = null; // Reset selection when new data is fetched
+    selectedManga.value = null;
   } catch (error) {
     console.error("Error fetching manga:", error);
   }
@@ -58,6 +86,14 @@ const fetchMangas = async () => {
 // Function to update the selected manga index
 const selectManga = (index) => {
   selectedMangaIndex.value = index;
+
+  // Get the selected manga's data
+  const manga = mangas.value[index];
+  selectedManga.value = {
+    name: manga.mangaName,
+    image: `https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`,
+    genres: manga.genreTags,
+  };
 };
 </script>
 <style scoped>
@@ -127,5 +163,78 @@ const selectManga = (index) => {
   background-color: #A6721F;
   border-radius: 10px;
 }
+
+.right-half {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  position: relative;
+  background-color: #1E1E1E;
+  border-radius: 10px;
+}
+
+.manga-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px; /* Adjust based on your layout */
+  height: 100%;
+  /* border-radius: 10px; */
+}
+
+.manga-image {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.overlay {
+  height: 80%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(15, 14, 12, 1) 0%,      /* #0F0E0C at 100% opacity */
+    rgba(33, 29, 21, 1) 66%,     /* #211D15 at 100% opacity */
+    rgba(33, 29, 21, 0.5) 90%,   /* #211D15 at 50% opacity */
+    rgba(151, 151, 151, 0) 100%  /* #979797 at 0% opacity */
+  );
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.manga-info {
+  max-width: 70%;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+p {
+  margin: 5px 0;
+}
+
+.ratings {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.ratings p {
+  margin: 5px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
 
 </style>
