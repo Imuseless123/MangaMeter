@@ -1,17 +1,21 @@
 <template>
   <div class="outer-container">
     <div class="scroll-container" ref="scrollContainer">
-      <div
+      <LeaderboardPanel
         v-for="(genre, index) in genres"
         :key="index"
         :class="[
           'rectangle', 
           { 'selected-rectangle': selectedIndex === index }
         ]"
+        :genre="genre"
+        :topManga="'Reincarnated as the Lazy and Villainous Noble, I Broke the Scenario and Became the Most Formidable With Extraordinary Magic'"
+        :secondManga="'asdsaqw'"
+        :thirdManga="'asdasdcvs'"
         @click="selectGenre(genre)"
       >
         {{ genre }}
-      </div>
+      </LeaderboardPanel>
 
     </div>
     <button class="overlay-button" @click="toggleOverlay">Genres</button>
@@ -33,7 +37,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-
+import LeaderboardPanel from '../components/LeaderboardPanel.vue';
 const genres = ['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller'];
 const scrollContainer = ref(null);
 const isOverlayVisible = ref(false);
@@ -116,7 +120,6 @@ onMounted(() => {
 .rectangle {
   min-width: 400px;
   height: 100%; /* The child now takes the full height of the parent */
-  background-color: #3498db;
   display: flex;
   align-items: center;
   justify-content: center;
