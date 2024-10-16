@@ -8,7 +8,7 @@
           'rectangle', 
           { 'selected-rectangle': selectedIndex === index }
         ]"
-        @click="selectGenre(index)"
+        @click="selectGenre(genre)"
       >
         {{ genre }}
       </div>
@@ -22,7 +22,7 @@
           v-for="(genre, index) in filteredGenres" 
           :key="index" 
           class="genre-item"
-          @click="selectGenre(index)">
+          @click="selectGenre(genre)">
           {{ genre }}
         </div>
       </div>
@@ -40,20 +40,26 @@ const isOverlayVisible = ref(false);
 const searchQuery = ref('');
 const selectedIndex = ref(null);
 
-const selectGenre = (index) => {
-  selectedIndex.value = index;
-  isOverlayVisible.value = false;
-
-  // Scroll the container to the selected rectangle smoothly
-  const container = scrollContainer.value;
-  const rectangles = container.children;
-  const selectedRectangle = rectangles[index];
+const selectGenre = (selectedGenre) => {
+  // Find the index of the selected genre in the original genres array
+  const index = genres.indexOf(selectedGenre);
   
-  container.scrollTo({
-    left: selectedRectangle.offsetLeft - (container.clientWidth / 2) + (selectedRectangle.clientWidth / 2),
-    behavior: 'smooth'
-  });
+  if (index !== -1) {
+    selectedIndex.value = index; // Set the selected index to the original index
+    isOverlayVisible.value = false;
+
+    // Scroll the container to the selected rectangle smoothly
+    const container = scrollContainer.value;
+    const rectangles = container.children;
+    const selectedRectangle = rectangles[index];
+    
+    container.scrollTo({
+      left: selectedRectangle.offsetLeft - (container.clientWidth / 2) + (selectedRectangle.clientWidth / 2),
+      behavior: 'smooth'
+    });
+  }
 };
+
 
 const toggleOverlay = () => {
   isOverlayVisible.value = !isOverlayVisible.value;
