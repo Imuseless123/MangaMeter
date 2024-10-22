@@ -17,23 +17,24 @@
       </nav>
       <div class="auth-buttons">
         <div class="opacity">
-          <button label="Login font_roboto" @click="openLogin" class="p-button-outlined" >Login</button>
-        </div>
-        <div class="opacity">
-          <button label="Sign Up font_roboto" @click="openSignup" class="p-button-outlined" >Sign Up</button>
+          <button label="Login font_roboto" @click="openLogin" class="p-button-outlined">Login</button>
         </div>
       </div>
     </div>
+
+    <!-- Conditionally show the login popup -->
+    <LoginPopup v-if="showLoginPopup" @close="showLoginPopup = false" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
+import LoginPopup from './LoginPopup.vue'; // Import the popup component
 
-// Create references for the links using Vue's `ref` function
-var homeLink;
-var searchLink;
-var leaderboardLink;
+// Boolean variable to manage popup visibility
+const showLoginPopup = ref(false);
+
+var homeLink, searchLink, leaderboardLink;
 
 onMounted(() => {
   homeLink = document.getElementById('homeLink');
@@ -41,12 +42,11 @@ onMounted(() => {
   leaderboardLink = document.getElementById('leaderboardLink');
 })
 
-function navigating(event){
+function navigating(event) {
   resetNavigate();
   event.target.style.backgroundColor = 'rgba(185, 139, 70, 0.5)';
 }
 
-// Function to reset the styles of all the links
 function resetNavigate() {
   homeLink.style.backgroundColor = '';
   searchLink.style.backgroundColor = '';
@@ -54,16 +54,11 @@ function resetNavigate() {
 }
 
 function openLogin() {
-  // Logic to open the login popup
-  console.log('Login button clicked');
+  // Show the login popup
+  showLoginPopup.value = true;
 }
 
-function openSignup() {
-  // Logic to open the signup popup
-  console.log('Sign Up button clicked');
-}
-
-function openHomePage(){
+function openHomePage() {
   console.log('Logo clicked');
 }
 </script>

@@ -88,7 +88,7 @@ const fetchMangas = async () => {
   if (!searchTerm.value.trim()) return;
 
   try {
-    const response = await axios.get(`http://localhost:3000/searchTitle/`, {
+    const response = await axios.get(`http://localhost:3000/manga/search/`, {
       params: {
         title: searchTerm.value,
         limit: 5,
