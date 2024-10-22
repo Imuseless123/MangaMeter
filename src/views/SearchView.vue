@@ -30,37 +30,39 @@
           <div class="overlay">
             <div class="manga-info">
               <h2 id="mangaName" class="mangaName">
-                {{ selectedManga.name }} {{ selectedManga.name }} {{ selectedManga.name }}
+                {{ selectedManga.name }}
               </h2>
               <div class="ranking">
-                <ul class="noDeco">
-                  <li class="center-text overall">
-                    <ul class="noDeco spacing ranking-row-layout">
-                      <li class="mange-genre">
-                        <strong>Overall:</strong>
-                      </li>
-                      <li class="manga-score">
-                        7.9
-                      </li>
-                      <li class="user-score">
-                        7
-                      </li>
-                    </ul>
-                  </li>
-                  <li class="center-text" v-for="(genre, index) in selectedManga.genres" :key="index">
-                    <ul class="noDeco spacing ranking-row-layout">
-                      <li class="mange-genre">
-                        {{ genre }}:
-                      </li>
-                      <li class="manga-score">
-                        {{ index }}
-                      </li>
-                      <li class="user-score">
-                        7
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
+                <div class="ranking-row">
+                  <div class="genre-col">
+                    <strong>Overall:</strong>
+                  </div>
+                  <div class="overall-col">
+                    <div class="score-holder">
+                      7.9
+                    </div>
+                  </div>
+                  <div class="user-col">
+                    <div class="user-score-holder">
+                      7
+                    </div>
+                  </div>
+                </div>
+                <div class="ranking-row" v-for="(genre, index) in selectedManga.genres" :key="index">
+                  <div class="genre-col">
+                    {{ genre }}:
+                  </div>
+                  <div class="overall-col">
+                    <div class="score-holder">
+                      {{ index }}
+                    </div>
+                  </div>
+                  <div class="user-col">
+                    <div class="user-score-holder">
+                      7
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -250,23 +252,28 @@ const selectManga = async (index) => {
   color: white;
   display: flex;
   justify-content: center;
+  /* align-items: start; */
   padding: 20px;
   border-radius: 10px;
 }
 
 .manga-info {
   max-width: 95%;
+  width: 100%;
+  /* background-color: yellow; */
 }
 
 h2 {
   max-width: 911px;
-  height: 200px;
+  height: 100px;
   font-size: 20px;
   margin-bottom: 10px;
   overflow: hidden;
   display: flex; /* Changed from -webkit-box to flex */
   align-items: flex-end; /* Aligns text to the top */
   position: relative;
+  /* background-color: aquamarine; */
+  margin-bottom: 50px;
 }
 
 
@@ -291,91 +298,54 @@ p {
 }
 
 .ranking{
+  width: 80%;
+  margin: 0 auto;
+  /* background-color: antiquewhite; */
+}
+
+.ranking-row{
+  width: 100%;
   display: flex;
   justify-content: center;
-}
-
-.noDeco {
-  list-style-type: none; /* Remove bullet points */
-}
-
-.spacing {
-  margin-bottom: 10px; /* Add spacing between each list item */
-}
-
-.ranking-row-layout {
-  max-width: 500px;
-  display: flex; /* Align items horizontally */
-  justify-content: space-between; /* Space out all items evenly */
-  align-items: center; /* Vertically align items */
-}
-
-.ranking-row-layout li:first-child {
-  flex: 1; /* Take up available space */
-}
-
-.ranking-row-layout li:nth-child(2),
-.ranking-row-layout li:nth-child(3) {
-  min-width: 200px; /* Ensures second and third li have equal minimum width */
-  text-align: center; /* Center the text within the li */
-}
-
-/* ul.user-spacing li {
-  margin-top: 5px;
   margin-bottom: 10px;
+  /* background-color: aqua; */
 }
 
-ul.user-spacing li:last-child {
-  margin-bottom: 0; 
-} */
-
-.center-text{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.manga-score{
-  padding: 5px 0px;
-  border-radius: 5px;
-  /* width: 80px; */
-  background-color: #D89831;
-  float: left;
-  width: 50%;
-}
-
-.user-score{
-  font-size: 10px;
-  padding: 5px 0px;
-  border-radius: 5px;
-  /* width: 80px; */
-  background-color: #515552;
-  float: left;
+.genre-col{
   width: 25%;
-}
-
-.mange-genre{
-  padding: 5px 0px;
-  justify-content: flex-start;
-  float: left;
-  width: 25%;
-}
-
-.overall{
   font-size: 20px;
+  /* background-color: red; */
 }
 
-.score-section{
-  display: flex;
-  justify-items: start;
+.overall-col{
+  width: 30%;
+  font-size: 20px;
+  /* background-color: blue; */
 }
 
-.a{
-  background-color: aqua;
+.user-col{
+  width: 18%;
+  font-size: 18px;
+  justify-content: center;
+  /* background-color: yellowgreen; */
+  margin: auto 0;
 }
 
-.b{
-  background-color: aliceblue;
+.score-holder{
+  width: 80%;
+  padding: 5px 0;
+  margin-left: auto;
+  text-align: center;
+  background-color: #D89831;
+  border-radius: 5px;
+}
+
+.user-score-holder{
+  width: 100%;
+  padding: 2px 0;
+  text-align: center;
+  background-color: #515552;
+  border-radius: 0 5px 5px 0;
 }
 
 </style>

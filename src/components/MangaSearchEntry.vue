@@ -134,7 +134,7 @@ const handleClick = () => {
   object-fit: contain; /* Maintain aspect ratio of the image */
 }
 .manga-details {
-  width: 500px;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
