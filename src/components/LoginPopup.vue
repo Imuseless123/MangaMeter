@@ -8,20 +8,26 @@
         
         <!-- Conditional content for Login and Sign Up -->
         <div v-if="activeTab === 'login'" class="form-container">
-          <input type="email" placeholder="Username" v-model="username"/>
-          <input type="password" placeholder="Password" v-model="username"/>
-          <button @click="login">Login</button>
+          <input type="email" placeholder="Email" v-model="username"/>
+          <input type="password" placeholder="Password" v-model="password"/>
+          <button :disabled="loading" @click="login">
+          <span v-if="loading">Loading...</span>
+          <span v-else>Login</span>
+        </button>
         </div>
         <div v-else class="form-container">
-          <input type="email" placeholder="Username" v-model="username"/>
+          <input type="email" placeholder="Email" v-model="username"/>
           <input type="password" placeholder="Password" v-model="password"/>
-          <input type="password" placeholder="confirmPassword" v-model="confirmPassword"/>
-          <button @click="signup">Sign Up</button>
+          <input type="password" placeholder="Confirm Password" v-model="confirmPassword"/>
+          <button :disabled="loading" @click="signup">
+          <span v-if="loading">Signing up...</span>
+          <span v-else>Sign Up</span>
+        </button>
         </div>
       </div>
     </div>
   </template>
-
+  
   <script lang="ts" setup>
   import { ref } from 'vue';
   import supabase from '../ultis/supabaseClient'; // Import the Supabase client
@@ -30,17 +36,19 @@
     isOpen: Boolean,
   });
   
-  const emit = defineEmits(['close']);
+  const emit = defineEmits(['close', 'authenticated']); // Emit 'authenticated' event
   const activeTab = ref('login'); // Controls the active tab
   const username = ref('');
   const password = ref('');
   const confirmPassword = ref(''); // For sign-up form's "retype password"
+  const loading = ref(false);
   
   function closePopup() {
     emit('close');
   }
   
   async function login() {
+    loading.value = true;
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: username.value,
@@ -51,13 +59,17 @@
         console.error('Login error:', error.message);
       } else {
         console.log('Login successful:', data);
+        emit('authenticated', username.value); // Pass the email to the header
+        emit('close'); // Close the popup
       }
     } catch (err) {
       console.error('Login error:', err.message);
     }
+    finally{loading.value = false;}
   }
   
   async function signup() {
+    loading.value = true;
     if (password.value !== confirmPassword.value) {
       console.error('Passwords do not match');
       return;
@@ -73,13 +85,15 @@
         console.error('Sign Up error:', error.message);
       } else {
         console.log('Sign Up successful:', data);
+        emit('authenticated', username.value); // Pass the email to the header
+        emit('close'); // Close the popup
       }
     } catch (err) {
       console.error('Sign Up error:', err.message);
     }
+    finally{loading.value = false;}
   }
   </script>
-  
   
   <style scoped>
   .popup-overlay {

@@ -16,23 +16,28 @@
         </div>
       </nav>
       <div class="auth-buttons">
-        <div class="opacity">
+        <div v-if="!userEmail" class="opacity">
           <button label="Login font_roboto" @click="openLogin" class="p-button-outlined">Login</button>
+        </div>
+        <div v-else>
+          <span class="user-email">{{ userEmail }}</span>
+          <button label="Logout font_roboto" @click="logout" class="p-button-outlined">Logout</button>
         </div>
       </div>
     </div>
 
     <!-- Conditionally show the login popup -->
-    <LoginPopup v-if="showLoginPopup" @close="showLoginPopup = false" />
+    <LoginPopup v-if="showLoginPopup" @close="showLoginPopup = false" @authenticated="handleAuthenticated" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import LoginPopup from './LoginPopup.vue'; // Import the popup component
+import supabase from '../ultis/supabaseClient'; 
 
-// Boolean variable to manage popup visibility
-const showLoginPopup = ref(false);
+const showLoginPopup = ref(false); // Boolean variable to manage popup visibility
+const userEmail = ref<string | null>(null); // Store the user's email
 
 var homeLink, searchLink, leaderboardLink;
 
@@ -60,6 +65,20 @@ function openLogin() {
 
 function openHomePage() {
   console.log('Logo clicked');
+}
+
+function handleAuthenticated(email: string) {
+  userEmail.value = email; // Set the user's email after login/signup
+  showLoginPopup.value = false; // Close the popup
+}
+async function logout() {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    console.error('Error logging out:', error.message);
+  } else {
+    userEmail.value = null; // Clear the user's email after logging out
+    console.log('User logged out successfully');
+  }
 }
 </script>
 
@@ -134,5 +153,9 @@ function openHomePage() {
   .opacity:active{
     opacity: 0.5;
   }
+}
+.user-email {
+  font-weight: bold;
+  color: #FFFFFF;
 }
 </style>
