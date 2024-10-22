@@ -23,24 +23,45 @@
       </div>
     </div>
 
-    <div class="right-half">
+    <div class="right-half font_roboto">
       <template v-if="selectedManga">
         <div class="manga-container">
           <img :src="selectedManga.image" alt="Manga Cover" class="manga-image" />
           <div class="overlay">
             <div class="manga-info">
-              <h2>{{ selectedManga.name }}</h2>
-              <p><strong>Genres:</strong> {{ selectedManga.genres.join(', ') }}</p>
-              <p><strong>Overall:</strong> 7.9</p>
-              <p><strong>Action:</strong> 7.9</p>
-              <p><strong>Drama:</strong> 7.9</p>
-              <p><strong>Mystery:</strong> 7.9</p>
-            </div>
-            <div class="ratings">
-              <p>7</p>
-              <p>9</p>
-              <p>6</p>
-              <p>8</p>
+              <h2 id="mangaName" class="mangaName">
+                {{ selectedManga.name }} {{ selectedManga.name }} {{ selectedManga.name }}
+              </h2>
+              <div class="ranking">
+                <ul class="noDeco">
+                  <li class="center-text overall">
+                    <ul class="noDeco spacing ranking-row-layout">
+                      <li class="mange-genre">
+                        <strong>Overall:</strong>
+                      </li>
+                      <li class="manga-score">
+                        7.9
+                      </li>
+                      <li class="user-score">
+                        7
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="center-text" v-for="(genre, index) in selectedManga.genres" :key="index">
+                    <ul class="noDeco spacing ranking-row-layout">
+                      <li class="mange-genre">
+                        {{ genre }}:
+                      </li>
+                      <li class="manga-score">
+                        {{ index }}
+                      </li>
+                      <li class="user-score">
+                        7
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -53,7 +74,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted,defineAsyncComponent,nextTick } from 'vue';
 import MangaSearchEntry from '../components/MangaSearchEntry.vue';
 import axios from 'axios';
 
@@ -61,6 +82,7 @@ const mangas = ref([]);
 const searchTerm = ref('');
 const selectedMangaIndex = ref(null); // Track the selected manga index
 const selectedManga = ref(null);
+let h2Element;
 
 const fetchMangas = async () => {
   if (!searchTerm.value.trim()) return;
@@ -84,7 +106,7 @@ const fetchMangas = async () => {
 };
 
 // Function to update the selected manga index
-const selectManga = (index) => {
+const selectManga = async (index) => {
   selectedMangaIndex.value = index;
 
   // Get the selected manga's data
@@ -94,9 +116,31 @@ const selectManga = (index) => {
     image: `https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`,
     genres: manga.genreTags,
   };
+
+  await nextTick(() => {
+    h2Element = document.getElementById('mangaName');
+    console.log(h2Element);  // This should now return the correct element
+    checkOverflow(h2Element);
+  });
 };
+
+// // Function to check if the h2 element overflows
+// const checkOverflow = () => {
+//   // console.log(h2Element.scrollWidth);
+//   if (h2Element && h2Element.scrollWidth > h2Element.clientWidth) {
+//     h2Element.style.alignItems = 'flex-start'; // Change to flex-start if overflow detected
+//     console.log("flex-start");
+//   } else if (h2Element){
+//     h2Element.style.alignItems = 'flex-end'; // Reset to default if no overflow
+//     console.log("flex-end");
+//   }
+// };
 </script>
 <style scoped>
+.font_roboto{
+  font-family: 'Roboto', sans-serif;
+}
+
 .container {
   display: flex;
   height: 100%; 
@@ -178,9 +222,8 @@ const selectManga = (index) => {
 .manga-container {
   position: relative;
   width: 100%;
-  max-width: 800px; /* Adjust based on your layout */
+  max-width: 800px;
   height: 100%;
-  /* border-radius: 10px; */
 }
 
 .manga-image {
@@ -206,19 +249,26 @@ const selectManga = (index) => {
   );
   color: white;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   padding: 20px;
   border-radius: 10px;
 }
 
 .manga-info {
-  max-width: 70%;
+  max-width: 95%;
 }
 
 h2 {
+  max-width: 911px;
+  height: 200px;
   font-size: 20px;
   margin-bottom: 10px;
+  overflow: hidden;
+  display: flex; /* Changed from -webkit-box to flex */
+  align-items: flex-end; /* Aligns text to the top */
+  position: relative;
 }
+
 
 p {
   margin: 5px 0;
@@ -231,10 +281,101 @@ p {
 }
 
 .ratings p {
-  margin: 5px 0;
+  margin: 5px 0;  
   font-size: 18px;
   font-weight: bold;
 }
 
+.mangaName{
+  justify-content: center;
+}
+
+.ranking{
+  display: flex;
+  justify-content: center;
+}
+
+.noDeco {
+  list-style-type: none; /* Remove bullet points */
+}
+
+.spacing {
+  margin-bottom: 10px; /* Add spacing between each list item */
+}
+
+.ranking-row-layout {
+  max-width: 500px;
+  display: flex; /* Align items horizontally */
+  justify-content: space-between; /* Space out all items evenly */
+  align-items: center; /* Vertically align items */
+}
+
+.ranking-row-layout li:first-child {
+  flex: 1; /* Take up available space */
+}
+
+.ranking-row-layout li:nth-child(2),
+.ranking-row-layout li:nth-child(3) {
+  min-width: 200px; /* Ensures second and third li have equal minimum width */
+  text-align: center; /* Center the text within the li */
+}
+
+/* ul.user-spacing li {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+ul.user-spacing li:last-child {
+  margin-bottom: 0; 
+} */
+
+.center-text{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.manga-score{
+  padding: 5px 0px;
+  border-radius: 5px;
+  /* width: 80px; */
+  background-color: #D89831;
+  float: left;
+  width: 50%;
+}
+
+.user-score{
+  font-size: 10px;
+  padding: 5px 0px;
+  border-radius: 5px;
+  /* width: 80px; */
+  background-color: #515552;
+  float: left;
+  width: 25%;
+}
+
+.mange-genre{
+  padding: 5px 0px;
+  justify-content: flex-start;
+  float: left;
+  width: 25%;
+}
+
+.overall{
+  font-size: 20px;
+}
+
+.score-section{
+  display: flex;
+  justify-items: start;
+}
+
+.a{
+  background-color: aqua;
+}
+
+.b{
+  background-color: aliceblue;
+}
 
 </style>
