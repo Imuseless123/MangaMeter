@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="right-half font_roboto">
+    <div class="right-half font_roboto" :class="{ overlay: isMobile, hidden: isMobile && !showRightHalf }">
       <template v-if="selectedManga">
         <div class="manga-container">
           <img :src="selectedManga.image" alt="Manga Cover" class="manga-image" />
@@ -84,7 +84,18 @@ const mangas = ref([]);
 const searchTerm = ref('');
 const selectedMangaIndex = ref(null); // Track the selected manga index
 const selectedManga = ref(null);
+let showRightHalf = ref(false);
+const isMobile = ref(false);
 let h2Element;
+// Check screen size to update `isMobile` flag
+function handleResize() {
+  isMobile.value = window.innerWidth <= 1200;
+}
+
+onMounted(() => {
+  handleResize(); // Initialize on mount
+  window.addEventListener('resize', handleResize); // Listen to window resize
+});
 
 const fetchMangas = async () => {
   if (!searchTerm.value.trim()) return;
@@ -122,21 +133,14 @@ const selectManga = async (index) => {
   await nextTick(() => {
     h2Element = document.getElementById('mangaName');
     console.log(h2Element);  // This should now return the correct element
-    checkOverflow(h2Element);
   });
+  showRightHalf = true;
+  console.log("showright: "+showRightHalf);
+  console.log("mobile: "+isMobile.value);
+  
 };
 
-// // Function to check if the h2 element overflows
-// const checkOverflow = () => {
-//   // console.log(h2Element.scrollWidth);
-//   if (h2Element && h2Element.scrollWidth > h2Element.clientWidth) {
-//     h2Element.style.alignItems = 'flex-start'; // Change to flex-start if overflow detected
-//     console.log("flex-start");
-//   } else if (h2Element){
-//     h2Element.style.alignItems = 'flex-end'; // Reset to default if no overflow
-//     console.log("flex-end");
-//   }
-// };
+
 </script>
 <style scoped>
 .font_roboto{
@@ -348,4 +352,24 @@ p {
   border-radius: 0 5px 5px 0;
 }
 
+
+.right-half.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #e8e8e8;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.right-half.hidden {
+  display: none;
+}
 </style>

@@ -149,10 +149,11 @@ const handleClick = () => {
   padding-bottom: 11px;
   mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1) 75%, rgba(0, 0, 0, 0)); /* Fades out at the end */
   -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 1) 75%, rgba(0, 0, 0, 0)); /* For Safari */
+  white-space: normal; /* Allow text to wrap */
+  word-break: break-word; /* Break long words to fit container */
   overflow: hidden;
-  white-space: nowrap;  
-  z-index: 1; 
 }
+
 
 .manga-genres {
   height: auto;
