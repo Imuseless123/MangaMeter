@@ -22,12 +22,15 @@
         </div>
       </div>
     </div>
-
-    <div class="right-half font_roboto" :class="{ overlay: isMobile, hidden: isMobile && !showRightHalf }">
+    <div class="right-half font_roboto" :class="{ overlay: isMobile && selectedManga !== null }"
+    v-show="!isMobile || selectedManga !== null">
       <template v-if="selectedManga">
         <div class="manga-container">
+
           <img :src="selectedManga.image" alt="Manga Cover" class="manga-image" />
           <div class="overlay">
+            <button v-if="isMobile" @click="closeDetails" class="close-button">Close</button>
+
             <div class="manga-info">
               <h2 id="mangaName" class="mangaName">
                 {{ selectedManga.name }}
@@ -71,12 +74,13 @@
       <template v-else>
         <p>Select a manga to view its details.</p>
       </template>
+      
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted,defineAsyncComponent,nextTick } from 'vue';
+import { ref, onMounted, onUnmounted,nextTick } from 'vue';
 import MangaSearchEntry from '../components/MangaSearchEntry.vue';
 import axios from 'axios';
 
@@ -84,17 +88,20 @@ const mangas = ref([]);
 const searchTerm = ref('');
 const selectedMangaIndex = ref(null); // Track the selected manga index
 const selectedManga = ref(null);
-let showRightHalf = ref(false);
 const isMobile = ref(false);
 let h2Element;
 // Check screen size to update `isMobile` flag
-function handleResize() {
-  isMobile.value = window.innerWidth <= 1200;
-}
+const updateIsMobile = () => {
+  isMobile.value = window.innerWidth <= 1200; // Adjust as needed for mobile breakpoint
+};
 
+// Run on component mount and window resize
 onMounted(() => {
-  handleResize(); // Initialize on mount
-  window.addEventListener('resize', handleResize); // Listen to window resize
+  updateIsMobile(); // Initial check
+  window.addEventListener('resize', updateIsMobile); // Listen for screen resizing
+});
+onUnmounted(() => {
+  window.removeEventListener('resize', updateIsMobile);
 });
 
 const fetchMangas = async () => {
@@ -134,10 +141,12 @@ const selectManga = async (index) => {
     h2Element = document.getElementById('mangaName');
     console.log(h2Element);  // This should now return the correct element
   });
-  showRightHalf = true;
-  console.log("showright: "+showRightHalf);
+
   console.log("mobile: "+isMobile.value);
   
+};
+const closeDetails = () => {
+  selectedManga.value = null;
 };
 
 
@@ -262,7 +271,7 @@ const selectManga = async (index) => {
 }
 
 .manga-info {
-  max-width: 95%;http://localhost:5173/
+  max-width: 95%;
   width: 100%;
   /* background-color: yellow; */
 }
@@ -359,17 +368,43 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #e8e8e8;
-  padding: 2rem;
+  padding: 20px;
+  padding-top:100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 10;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateX(100%);
+  animation: slideIn 0.3s ease forwards;
 }
 
-.right-half.hidden {
-  display: none;
+/* Close button styling */
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  z-index: 1001; /* Ensure it sits above other content */
 }
+
+/* Keyframes for slide-in animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 </style>
