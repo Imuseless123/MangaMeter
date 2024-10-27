@@ -262,7 +262,7 @@ const selectManga = async (index) => {
 }
 
 .manga-info {
-  max-width: 95%;
+  max-width: 95%;http://localhost:5173/
   width: 100%;
   /* background-color: yellow; */
 }
