@@ -47,7 +47,7 @@
                   </div>
                   <div class="user-col">
                     <div class="user-score-holder">
-                      7
+                      0
                     </div>
                   </div>
                 </div>
@@ -62,7 +62,7 @@
                   </div>
                   <div class="user-col">
                     <div class="user-score-holder">
-                      7
+                      0
                     </div>
                   </div>
                 </div>
@@ -173,10 +173,10 @@ const closeDetails = () => {
 
 .right-half {
   flex: 1; /* Takes 50% of the container */
-  background-color: lightcoral; /* Change to your desired color */
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 40px 40px 40px 0;
 }
 
 .search-container {
@@ -230,7 +230,6 @@ const closeDetails = () => {
   justify-content: center;
   align-items: start;
   position: relative;
-  background-color: #1E1E1E;
   border-radius: 10px;
 }
 
