@@ -1,88 +1,21 @@
 <template>
   <div class="container">
     <div class="left-half">
-      <div class="search-container">
-        <input 
-          type="text" 
-          placeholder="Search..." 
-          class="search-bar" 
-          v-model="searchTerm" 
-          @keyup.enter="fetchMangas"
-        />
-        <div class="rectangle-list">
-          <MangaSearchEntry 
-            v-for="(manga, index) in mangas" 
-            :key="index" 
-            :name="manga.mangaName" 
-            :image="`https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`" 
-            :genres="manga.genreTags" 
-            :isSelected="selectedMangaIndex === index" 
-            @selectManga="selectManga(index)"
-          />
-        </div>
-      </div>
+      <SearchPanel/>
     </div>
     <div class="right-half font_roboto" :class="{ overlay: isMobile && selectedManga !== null }"
     v-show="!isMobile || selectedManga !== null">
-      <template v-if="selectedManga">
-        <div class="manga-container">
-
-          <img :src="selectedManga.image" alt="Manga Cover" class="manga-image" />
-          <div class="overlay">
-            <button v-if="isMobile" @click="closeDetails" class="close-button">Close</button>
-
-            <div class="manga-info">
-              <h2 id="mangaName" class="mangaName">
-                {{ selectedManga.name }}
-              </h2>
-              <div class="ranking">
-                <div class="ranking-row">
-                  <div class="genre-col">
-                    <strong>Overall:</strong>
-                  </div>
-                  <div class="overall-col">
-                    <div class="score-holder">
-                      7.9
-                    </div>
-                  </div>
-                  <div class="user-col">
-                    <div class="user-score-holder">
-                      0
-                    </div>
-                  </div>
-                </div>
-                <div class="ranking-row" v-for="(genre, index) in selectedManga.genres" :key="index">
-                  <div class="genre-col">
-                    {{ genre }}:
-                  </div>
-                  <div class="overall-col">
-                    <div class="score-holder">
-                      {{ index }}
-                    </div>
-                  </div>
-                  <div class="user-col">
-                    <div class="user-score-holder">
-                      0
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-      <template v-else>
-        <p>Select a manga to view its details.</p>
-      </template>
-      
+      <RatePanel/>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted,nextTick } from 'vue';
-import MangaSearchEntry from '../components/MangaSearchEntry.vue';
+import MangaSearchEntry from '@/components/MangaSearchEntry.vue';
 import axios from 'axios';
+import SearchPanel from '@/components/SearchPanel.vue';
+import RatePanel from '@/components/RatePanel.vue';
 
 const mangas = ref([]);
 const searchTerm = ref('');
@@ -176,7 +109,7 @@ const closeDetails = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 40px 40px 0;
+  padding: 40px 40px  40px 0px;
 }
 
 .search-container {
@@ -224,8 +157,6 @@ const closeDetails = () => {
 }
 
 .right-half {
-  width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: start;
