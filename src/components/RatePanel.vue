@@ -3,7 +3,6 @@
       <div class="manga-container">
         <img :src="selectedManga.image" alt="Manga Cover" class="manga-image" />
         <div class="overlay">
-          <button v-if="isMobile" @click="closeDetails" class="close-button">Close</button>
   
           <div class="manga-info">
             <h2 id="mangaName" class="mangaName">
@@ -66,9 +65,9 @@
     window.removeEventListener('resize', updateIsMobile);
   });
   
-  const closeDetails = () => {
-    ratingStore.setSelectedManga(null); // Clear the selected manga in the store
-  };
+  // const closeDetails = () => {
+  //   ratingStore.setSelectedManga(null);
+  // };
 </script>
   <style scoped>
   .font_roboto{
@@ -278,52 +277,6 @@
     text-align: center;
     background-color: #515552;
     border-radius: 0 5px 5px 0;
-  }
-  
-  
-  .right-half.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 20px;
-    padding-top:100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    transform: translateX(100%);
-    animation: slideIn 0.3s ease forwards;
-  }
-  
-  /* Close button styling */
-  .close-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 4px;
-    z-index: 1001; /* Ensure it sits above other content */
-  }
-  
-  /* Keyframes for slide-in animation */
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
   }
   
   </style>

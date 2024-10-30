@@ -3,26 +3,35 @@
     <div class="left-half">
       <SearchPanel/>
     </div>
-    <div class="right-half font_roboto" :class="{ overlay: isMobile && selectedManga !== null }"
-    v-show="!isMobile || selectedManga !== null">
-      <RatePanel/>
+ 
+    <div class="right-half font_roboto" 
+         :class="{ overlay: isMobile && selectedManga }"
+         v-show="!isMobile || selectedManga">
+      <RatePanel />
+      
+      <!-- Close button for the overlay -->
+      <button 
+        v-if="isMobile && selectedManga" 
+        class="close-button" 
+        @click="closeOverlay"
+      >
+        Close
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted,nextTick } from 'vue';
-import MangaSearchEntry from '@/components/MangaSearchEntry.vue';
-import axios from 'axios';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useRatingStore } from '@/stores/RatingStore'; // Adjust the path based on your project structure
 import SearchPanel from '@/components/SearchPanel.vue';
 import RatePanel from '@/components/RatePanel.vue';
 
-const mangas = ref([]);
-const searchTerm = ref('');
-const selectedMangaIndex = ref(null); // Track the selected manga index
-const selectedManga = ref(null);
+const ratingStore = useRatingStore(); // Use the Pinia store
+
+const selectedManga = computed(() => ratingStore.selectedManga);
 const isMobile = ref(false);
-let h2Element;
+
 // Check screen size to update `isMobile` flag
 const updateIsMobile = () => {
   isMobile.value = window.innerWidth <= 1200; // Adjust as needed for mobile breakpoint
@@ -37,66 +46,24 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateIsMobile);
 });
 
-const fetchMangas = async () => {
-  if (!searchTerm.value.trim()) return;
-
-  try {
-    const response = await axios.get(`http://localhost:3000/manga/search/`, {
-      params: {
-        title: searchTerm.value,
-        limit: 5,
-        page: 1,
-        order: 'desc'
-      }
-    });
-
-    mangas.value = response.data;
-    selectedMangaIndex.value = null; // Reset selection when new data is fetched
-    selectedManga.value = null;
-  } catch (error) {
-    console.error("Error fetching manga:", error);
-  }
+// Function to close the overlay and reset selected manga
+const closeOverlay = () => {
+  ratingStore.setSelectedManga(null); // Clear the selected manga in the store
 };
-
-// Function to update the selected manga index
-const selectManga = async (index) => {
-  selectedMangaIndex.value = index;
-
-  // Get the selected manga's data
-  const manga = mangas.value[index];
-  selectedManga.value = {
-    name: manga.mangaName,
-    image: `https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`,
-    genres: manga.genreTags,
-  };
-
-  await nextTick(() => {
-    h2Element = document.getElementById('mangaName');
-    console.log(h2Element);  // This should now return the correct element
-  });
-
-  console.log("mobile: "+isMobile.value);
-  
-};
-const closeDetails = () => {
-  selectedManga.value = null;
-};
-
-
 </script>
+
 <style scoped>
-.font_roboto{
+.font_roboto {
   font-family: 'Roboto', sans-serif;
 }
 
 .container {
   display: flex;
-  height: 100%; 
+  height: 100%;
 }
 
 .left-half {
   flex: 1; /* Takes 50% of the container */
-  /* background-color: #1E1E1E; */
   display: flex;
   align-items: flex-start; /* Align items to the top */
   justify-content: center; /* Center horizontally */
@@ -109,205 +76,7 @@ const closeDetails = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 40px  40px 0px;
-}
-
-.search-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /* Space between search bar and rectangles */
-}
-
-.search-bar {
-  width: 100%;
-  height: 40px;
-  border: 0px;
-  padding-left: 10px;
-  border-radius: 10px;
-  background: linear-gradient(to right, #521414 0%, #3E240F 53%, #A6721F 100%);
-  color: #FFFFFF;
-  outline: none; /* Removes the default outline */
-}
-
-.search-bar:focus{
-  outline: 2px solid #A6721F;
-  outline-offset: 2px;
-}
-
-.rectangle-list {
-  flex: 1;
-  height: 100%;
-  overflow-y: auto; /* Enables vertical scrolling */
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-right: 15px;
-}
-
-/* Custom scrollbar styling */
-.rectangle-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.rectangle-list::-webkit-scrollbar-thumb {
-  background-color: #A6721F;
-  border-radius: 10px;
-}
-
-.right-half {
-  display: flex;
-  justify-content: center;
-  align-items: start;
-  position: relative;
-  border-radius: 10px;
-}
-
-.manga-container {
-  position: relative;
-  width: 100%;
-  max-width: 800px;
-  height: 100%;
-}
-
-.manga-image {
-  width: 100%;
-  height: auto;
-  max-height: 400px;
-  object-fit: cover;
-  border-radius: 10px;
-}
-
-.overlay {
-  height: 80%;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(
-    to top,
-    rgba(15, 14, 12, 1) 0%,      /* #0F0E0C at 100% opacity */
-    rgba(33, 29, 21, 1) 66%,     /* #211D15 at 100% opacity */
-    rgba(33, 29, 21, 0.5) 90%,   /* #211D15 at 50% opacity */
-    rgba(151, 151, 151, 0) 100%  /* #979797 at 0% opacity */
-  );
-  color: white;
-  display: flex;
-  justify-content: center;
-  /* align-items: start; */
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.manga-info {
-  max-width: 95%;
-  width: 100%;
-  /* background-color: yellow; */
-}
-
-h2 {
-  max-width: 911px;
-  height: 100px;
-  font-size: 20px;
-  margin-bottom: 10px;
-  overflow: hidden;
-  display: flex; /* Changed from -webkit-box to flex */
-  align-items: flex-end; /* Aligns text to the top */
-  position: relative;
-  /* background-color: aquamarine; */
-  margin-bottom: 50px;
-}
-
-
-p {
-  margin: 5px 0;
-}
-
-.ratings {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.ratings p {
-  margin: 5px 0;  
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.mangaName{
-  justify-content: center;
-}
-
-.ranking{
-  width: 80%;
-  margin: 0 auto;
-  /* background-color: antiquewhite; */
-}
-
-.ranking-row{
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
-  /* background-color: aqua; */
-}
-
-.genre-col{
-  width: 25%;
-  font-size: 20px;
-  /* background-color: red; */
-}
-
-.overall-col{
-  width: 30%;
-  font-size: 20px;
-  /* background-color: blue; */
-}
-
-.user-col{
-  width: 18%;
-  font-size: 18px;
-  justify-content: center;
-  /* background-color: yellowgreen; */
-  margin: auto 0;
-}
-
-.score-holder{
-  width: 80%;
-  padding: 5px 0;
-  margin-left: auto;
-  text-align: center;
-  background-color: #D89831;
-  border-radius: 5px;
-}
-
-.user-score-holder{
-  width: 100%;
-  padding: 2px 0;
-  text-align: center;
-  background-color: #515552;
-  border-radius: 0 5px 5px 0;
-}
-
-
-.right-half.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  padding-top:100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transform: translateX(100%);
-  animation: slideIn 0.3s ease forwards;
+  padding: 40px 40px 40px 0px;
 }
 
 /* Close button styling */
@@ -325,6 +94,20 @@ p {
   z-index: 1001; /* Ensure it sits above other content */
 }
 
+/* Overlay class */
+.overlay {
+  position: fixed; /* Make the overlay cover the screen */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8); /* Dark background */
+  z-index: 1000; /* Ensure it sits above other content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Keyframes for slide-in animation */
 @keyframes slideIn {
   from {
@@ -336,5 +119,4 @@ p {
     opacity: 1;
   }
 }
-
 </style>
