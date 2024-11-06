@@ -16,7 +16,6 @@
       >
         {{ genre }}
       </LeaderboardPanel>
-
     </div>
     <button class="overlay-button" @click="toggleOverlay">Genres</button>
     <div class="overlay" v-show="isOverlayVisible">

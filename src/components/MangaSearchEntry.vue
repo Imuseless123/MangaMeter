@@ -12,7 +12,7 @@
         {{ name }}
       </div>
       <div class="manga-genres">
-        <span v-for="(genre, index) in genres" :key="index" class="genre">{{ genre }}</span>
+        <span v-for="(genre, index) in genres" :key="index" class="genre">{{ genre.name }}</span>
       </div>
     </div>
     <div class="blobs_container" :class="{ 'visible': isSelected }">
@@ -58,14 +58,11 @@ const handleClick = () => {
   border-radius: 10px;
   display: flex;
   align-items: center;
-  padding: 16px; /* Add some padding */
   box-sizing: border-box;
   flex-shrink: 0; /* Prevent shrinking */
   overflow: hidden; /* Clip the background blur to fit inside the container's border radius */
   transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-  box-shadow: -2.5px 2px 6px var(--color-surface-a30); 
-  margin-left: 10px;
-  margin-bottom: 15px;
+  box-shadow: 0px 2px 6px var(--color-surface-a30); 
 }
 
 .manga-entry-container:hover {

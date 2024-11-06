@@ -1,11 +1,8 @@
 <template>
   <div class="leaderboard-panel">
-    <!-- Section 1: Genre Name -->
     <div class="panel-section genre-name">
       <h3>{{ genre }}</h3>
     </div>
-
-    <!-- Section 2: Top Manga (Biggest section) -->
     <div class="panel-section top-manga">
         <div class="manga-background">
             <div class="manga-title-wrapper">
@@ -14,8 +11,6 @@
 
         </div>
     </div>
-
-    <!-- Section 3: Second Manga -->
     <div class="panel-section second-manga">
       <p>#2: {{ secondManga }}</p>
     </div>

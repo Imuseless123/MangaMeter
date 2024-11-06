@@ -22,7 +22,7 @@
               </div>
               <div class="ranking-row" v-for="(genre, index) in selectedManga.genres" :key="index">
                 <div class="genre-col">
-                  {{ genre }}:
+                  {{ genre.name }}:
                 </div>
                 <div class="overall-col">
                   <div class="score-holder">{{ index }}</div>
