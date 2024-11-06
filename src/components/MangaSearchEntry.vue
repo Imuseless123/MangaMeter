@@ -78,7 +78,7 @@ const handleClick = () => {
 .blobs_container {
   position: absolute;
   height: 200%; 
-  aspect-ratio: 1/1;
+  aspect-ratio: 1/2;
   left: 70%;
   pointer-events: none; /* Prevent interaction with the blobs */
   opacity: 0; /* Initially hidden */
@@ -155,16 +155,26 @@ const handleClick = () => {
 .manga-genres {
   height: auto;
   display: flex;
-  flex-wrap: wrap; /* Allow genres to wrap if needed */
-  gap: 4px; /* Space between genres */
-  /* background-color: bisque; */
-  z-index: 1; 
+  flex-wrap: wrap;
+  gap: 6px; /* Slightly larger gap for better separation */
+  z-index: 1;
 }
 
 .genre {
-  background-color: rgba(255, 255, 255, 0.8); /* Background for genres */
-  border-radius: 4px;
-  padding: 4px 8px; /* Padding for genre items */
-  font-size: 12px; /* Font size for genres */
+  background: rgb(78, 58, 30); /* Gold to orange gradient */
+  color: #ffffff; /* Dark text color for contrast */
+  border-radius: 8px; /* Rounded corners for a softer look */
+  padding: 4px 10px; /* Comfortable padding for smaller elements */
+  font-size: 12px;
+  font-weight: 500; /* Slightly bolder font for readability */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.genre:hover {
+  background: transparent; /* Transparent background */
+  color: #edad45; /* Gold text color for the inverted effect */
+  border: 1px solid #edad45;/* Reversed gradient for hover effect */
+  transform: scale(1.05); /* Slight scale-up on hover */
 }
 </style>

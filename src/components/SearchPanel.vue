@@ -10,8 +10,12 @@
         />
     </div>
     <div class="result-container">
-      <div class="page">
-        <div class="pagination">
+      <div v-if="isLoading" class="loading-indicator">
+        Loading...
+      </div>
+      <div v-else class="loaded-container">
+        <div class="page">
+        <div class="pagination" v-if="mangas.length > 0">
           <button @click="changePage(1)" :disabled="currentPage === 1"><<</button>
           <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"><</button>
           <span v-for="page in visiblePages" :key="page">
@@ -39,6 +43,8 @@
             @selectManga="selectManga(index)"
         />
       </div>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -53,16 +59,20 @@ const mangas = ref([]);
 const searchTerm = ref('');
 const ratingStore = useRatingStore();
 const currentPage = ref(1);
-const totalPages = ref(10);
 const total = ref(0);
+const isLoading = ref(false); 
+const totalPages = computed(() => {
+  return Math.ceil(total.value / 10); // 10 is the number of manga per page
+});
 const fetchMangas = async () => {
   if (!searchTerm.value.trim()) return;
+  isLoading.value = true;
 
   try {
     const response = await axios.get(`http://localhost:3000/manga/search/`, {
       params: {
         title: searchTerm.value,
-        limit: 5,
+        limit: 10,
         page: currentPage.value,
         order: 'desc'
       }
@@ -76,6 +86,9 @@ const fetchMangas = async () => {
   } catch (error) {
     console.error("Error fetching manga:", error);
   }
+  finally {
+    isLoading.value = false; // Set loading state to false when fetch is complete
+  }
 };
 
 const changePage = (page) => {
@@ -84,23 +97,24 @@ const changePage = (page) => {
     fetchMangas();
   }
 };
+// Computed property for visible pages
 const visiblePages = computed(() => {
   const pages = [];
   for (let i = 1; i <= totalPages.value; i++) {
     if (
-      i === 1 || 
-      i === totalPages.value || 
+      i === 1 ||
+      i === totalPages.value ||
       (i >= currentPage.value - 2 && i <= currentPage.value + 2)
     ) {
       pages.push(i);
     } else if (
-      i === currentPage.value - 3 || 
+      i === currentPage.value - 3 ||
       i === currentPage.value + 3
     ) {
       pages.push('...');
     }
   }
-  return pages;
+  return [...new Set(pages)]; // Remove duplicate '...' entries
 });
 const selectManga = async (index) => {
   selectedMangaIndex.value = index;
@@ -186,16 +200,25 @@ const selectManga = async (index) => {
   border-radius: 10px;
 }
 
-.pagination{
+.pagination {
   display: flex;
+  gap: 4px; /* Adds spacing between buttons */
 }
+
 .pagination button {
-  background-color: #521414;
+  background-color: transparent;
   color: white;
-  border: none;
+  border: 1px solid #7e3d3d; /* Softer border color for visual depth */
   border-radius: 5px;
-  padding: 5px 10px;
+  padding: 6px 12px; /* Slightly larger padding for a more modern feel */
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #A6721F; /* Highlight color on hover */
+  color: #1e1e1e; /* Dark text color on hover for contrast */
+  transform: translateY(-2px); /* Subtle lift effect */
 }
 
 .pagination button:disabled {
@@ -205,6 +228,51 @@ const selectManga = async (index) => {
 
 .pagination button.active {
   background-color: #A6721F;
+  color: #1e1e1e;
+  border: 1px solid #8a5c23; /* A slightly darker border for the active state */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for the active button */
 }
 
+.pagination button:not(:disabled):not(.active):hover {
+  border-color: #A6721F; /* Add border color change on hover */
+}
+
+.loading-indicator {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Adjust height according to your needs */
+  font-size: 18px; /* Text size */
+  color: #666; /* Loading text color */
+  font-weight: bold;
+}
+
+.loading-indicator::before {
+  content: '';
+  border: 4px solid transparent;
+  border-top: 4px solid #db8d34; /* Blue spinner color */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin-right: 10px; /* Space between text and spinner */
+}
+
+/* Keyframes for the spinning animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.loaded-container{
+  display: flex;           /* Optional: Flex layout for alignment */
+  flex-direction: column; /* Align children vertically */
+  height: 100%;           /* Take full height of the parent */
+  width: 100%;            /* Take full width */
+  overflow: hidden;
+}
 </style>
