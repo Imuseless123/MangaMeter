@@ -114,15 +114,15 @@ const handleClick = () => {
   }
 }
 .image-container {
-  width: 100px; /* 12 units */
+  width: 120px; /* 12 units */
   height: 150px; /* 17 units */
   display: flex;
   z-index: 1; 
   justify-content: center;
   align-items: center;
   overflow: hidden; /* Hide overflow to maintain the aspect ratio */
-  margin-right: 16px; /* Space between image and details */
-  border-radius: 10px;
+  margin: 16px; /* Space between image and details */
+
 }
 
 .manga-image {

@@ -1,5 +1,7 @@
 <template>
   <div class="container">
+    <div class="background-image"></div>
+    <div class="background-overlay"></div>
     <div class="left-half">
       <SearchPanel/>
     </div>
@@ -10,7 +12,6 @@
         :class="{ overlay: isMobile && selectedManga }"
       >
         <RatePanel />
-
         <!-- Close button for the overlay -->
         <button 
           v-if="isMobile && selectedManga" 
@@ -64,6 +65,9 @@ const closeOverlay = () => {
 .container {
   display: flex;
   height: 100%;
+  position: relative; /* Make it the containing block for absolute positioning */
+  overflow: hidden;
+  z-index: 10;
 }
 
 .left-half {
@@ -73,6 +77,7 @@ const closeOverlay = () => {
   justify-content: center; /* Center horizontally */
   padding: 40px; /* Add padding */
   box-sizing: border-box; /* Include padding in the total width/height */
+  z-index: 10;
 }
 
 .right-half {
@@ -81,6 +86,7 @@ const closeOverlay = () => {
   align-items: center;
   justify-content: center;
   padding: 40px 40px 40px 0px;
+  z-index: 10;
 }
 
 /* Close button styling */
@@ -126,7 +132,34 @@ const closeOverlay = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10;
 }
-
+.background-image {
+  width: 100vw;
+  height: 100vh;
+  opacity: 0.3;
+  position: absolute;
+  background-image: url('../assets/panel_wall.webp');
+  background-size: 200%;
+  animation: diagonal-slide 40s linear infinite alternate;
+  z-index: -2;
+}
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, black 10%, transparent 40%, transparent 60%, black 80%);
+  z-index: -1; /* Layered above the background image but behind content */
+}
+@keyframes diagonal-slide {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
 
 </style>

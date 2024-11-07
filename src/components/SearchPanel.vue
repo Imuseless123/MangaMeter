@@ -1,52 +1,59 @@
 <template>
-  <div class="container">
-    <div class= "search">
-      <input 
-          type="text" 
-          placeholder="Search..." 
-          class="search-bar" 
-          v-model="searchTerm" 
-          @keyup.enter="fetchMangas"
-        />
-    </div>
-    <div class="result-container">
-      <div v-if="isLoading" class="loading-indicator">
-        Loading...
-      </div>
-      <div v-else class="loaded-container">
-        <div class="page">
-        <div class="pagination" v-if="mangas.length > 0">
-          <button @click="changePage(1)" :disabled="currentPage === 1"><<</button>
-          <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"><</button>
-          <span v-for="page in visiblePages" :key="page">
-            <button 
-              @click="changePage(page)" 
-              :class="{ active: currentPage === page }"
-              :disabled="currentPage === page"
-            >
-              {{ page }}
-            </button>
-          </span>
-          <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">></button>
-          <button @click="changePage(totalPages)" :disabled="currentPage === totalPages">>></button>
-        </div>
-      </div>
-
-      <div class="rectangle-list">
-        <MangaSearchEntry 
-            v-for="(manga, index) in mangas" 
-            :key="index" 
-            :name="manga.mangaName" 
-            :image="`https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`" 
-            :genres="manga.genreTags" 
-            :isSelected="selectedMangaIndex === index" 
-            @selectManga="selectManga(index)"
-        />
-      </div>
-      </div>
-      
-    </div>
+  <div class="background-container">
+<div v-if="mangas.length > 0" class="fade-left"></div>
   </div>
+  
+  <div class="container">
+  
+  <div class= "search">
+    <input 
+        type="text" 
+        placeholder="Search..." 
+        class="search-bar" 
+        v-model="searchTerm" 
+        @keyup.enter="fetchMangas"
+      />
+  </div>
+  <div class="result-container">
+    <div v-if="isLoading" class="loading-indicator">
+      Loading...
+    </div>
+    <div v-else class="loaded-container">
+      <div class="page">
+      <div class="pagination" v-if="mangas.length > 0">
+        <button @click="changePage(1)" :disabled="currentPage === 1"><<</button>
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"><</button>
+        <span v-for="page in visiblePages" :key="page">
+          <button 
+            @click="changePage(page)" 
+            :class="{ active: currentPage === page }"
+            :disabled="currentPage === page"
+          >
+            {{ page }}
+          </button>
+        </span>
+        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">></button>
+        <button @click="changePage(totalPages)" :disabled="currentPage === totalPages">>></button>
+      </div>
+    </div>
+
+    <div class="rectangle-list">
+      <MangaSearchEntry 
+          v-for="(manga, index) in mangas" 
+          :key="index" 
+          :name="manga.mangaName" 
+          :image="`https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`" 
+          :genres="manga.genreTags" 
+          :isSelected="selectedMangaIndex === index" 
+          @selectManga="selectManga(index)"
+      />
+    </div>
+    </div>
+    
+  </div>
+</div>
+  <!-- </div> -->
+
 </template>
 <script setup>
 import { ref,nextTick, computed } from 'vue';
@@ -142,14 +149,15 @@ const selectManga = async (index) => {
 }
 
 .container {
+  position: relative;
   width: 100%;
-  flex: 1;
+  height: 100%;
   gap: 10px;
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Adjust this to fit your layout */
   overflow-x: visible;
 }
+
 .search{
   width: 100%;
 }
@@ -275,4 +283,20 @@ const selectManga = async (index) => {
   width: 100%;            /* Take full width */
   overflow: hidden;
 }
+.fade-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Adjust the width as desired for the fading area */
+  height: 100%;
+  background: linear-gradient(to right, black 50%, transparent);
+  pointer-events: none; /* Prevents overlay from interfering with clicks */
+  z-index: -1;
+}
+.background-container{
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
 </style>
