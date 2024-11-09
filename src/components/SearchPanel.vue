@@ -76,7 +76,7 @@ const fetchMangas = async () => {
   isLoading.value = true;
 
   try {
-    const response = await axios.get(`http://localhost:3000/manga/search/`, {
+    const response = await axios.get(`https://mangameterapi.littlebutenough.com/manga/search/`, {
       params: {
         title: searchTerm.value,
         limit: 10,
