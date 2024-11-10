@@ -17,46 +17,45 @@
         
         <!-- Move auth buttons into the navigation -->
         <div class="auth-buttons">
-          <div v-if="!userEmail" class="opacity">
+          <div v-if="!accountStore.user" class="opacity">
             <button label="Login font_roboto" @click="openLogin" class="p-button-outlined">Login</button>
           </div>
-          <div v-else>
-            <span class="user-email">{{ userEmail }}</span>
-            <button label="Logout font_roboto" @click="logout" class="p-button-outlined">Logout</button>
+          <div v-else class="opacity">
+            <button @click="logout" class="p-button-outlined">Logout</button>
           </div>
         </div>
       </nav>
-
       <!-- Hamburger menu button on the right -->
       <div class="mobile-menu" @click="toggleMobileMenu">
         <span class="bar"></span>
         <span class="bar"></span>
         <span class="bar"></span>
       </div>
+      <span v-if="accountStore.user" class="user-email font_roboto">{{ accountStore.user.email }}</span>
     </div>
-
     <!-- Conditionally show the login popup -->
     <LoginPopup v-if="showLoginPopup" @close="showLoginPopup = false" @authenticated="handleAuthenticated" />
   </div>
 </template>
 
-
-<script lang="ts" setup>
+<script setup>
 import { ref, onMounted } from 'vue';
-import LoginPopup from './LoginPopup.vue'; // Import the popup component
-import supabase from '../ultis/supabaseClient'; 
+import { useAccountStore } from '@/stores/AccountStore'; // Import the account store
+import LoginPopup from './LoginPopup.vue';
 
-const showLoginPopup = ref(false); // Boolean variable to manage popup visibility
-const userEmail = ref<string | null>(null); // Store the user's email
+const accountStore = useAccountStore(); // Access account store
+const showLoginPopup = ref(false); // Boolean to control login popup visibility
 
+// Track mobile menu state
 const isMobileMenuOpen = ref(false);
-var homeLink, searchLink, leaderboardLink;
+let homeLink, searchLink, leaderboardLink;
 
+// Set up navigation highlighting
 onMounted(() => {
   homeLink = document.getElementById('homeLink');
   searchLink = document.getElementById('searchLink');
   leaderboardLink = document.getElementById('leaderboardLink');
-})
+});
 
 function navigating(event) {
   resetNavigate();
@@ -69,28 +68,26 @@ function resetNavigate() {
   leaderboardLink.style.backgroundColor = '';
 }
 
+// Open login popup
 function openLogin() {
-  // Show the login popup
   showLoginPopup.value = true;
+}
+
+// Handle authenticated event from popup
+function handleAuthenticated() {
+  showLoginPopup.value = false; // Close the popup on successful login
+}
+
+// Logout function using accountStore's logout action
+async function logout() {
+  await accountStore.logout();
 }
 
 function openHomePage() {
   console.log('Logo clicked');
 }
 
-function handleAuthenticated(email: string) {
-  userEmail.value = email; // Set the user's email after login/signup
-  showLoginPopup.value = false; // Close the popup
-}
-async function logout() {
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.error('Error logging out:', error.message);
-  } else {
-    userEmail.value = null; // Clear the user's email after logging out
-    console.log('User logged out successfully');
-  }
-}
+// Toggle mobile menu visibility
 function toggleMobileMenu() {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 }

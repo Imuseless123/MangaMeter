@@ -10,7 +10,7 @@
         <div v-if="activeTab === 'login'" class="form-container">
           <input type="email" placeholder="Email" v-model="username"/>
           <input type="password" placeholder="Password" v-model="password"/>
-          <button :disabled="loading" @click="login">
+          <button :disabled="loading" @click="handleLogin">
           <span v-if="loading">Loading...</span>
           <span v-else>Login</span>
         </button>
@@ -19,7 +19,7 @@
           <input type="email" placeholder="Email" v-model="username"/>
           <input type="password" placeholder="Password" v-model="password"/>
           <input type="password" placeholder="Confirm Password" v-model="confirmPassword"/>
-          <button :disabled="loading" @click="signup">
+          <button :disabled="loading" @click="handleSignup">
           <span v-if="loading">Signing up...</span>
           <span v-else>Sign Up</span>
         </button>
@@ -30,69 +30,46 @@
   
   <script lang="ts" setup>
   import { ref } from 'vue';
-  import supabase from '../ultis/supabaseClient'; // Import the Supabase client
-  
-  defineProps({
-    isOpen: Boolean,
-  });
-  
-  const emit = defineEmits(['close', 'authenticated']); // Emit 'authenticated' event
-  const activeTab = ref('login'); // Controls the active tab
-  const username = ref('');
-  const password = ref('');
-  const confirmPassword = ref(''); // For sign-up form's "retype password"
-  const loading = ref(false);
-  
-  function closePopup() {
-    emit('close');
+  import { useAccountStore } from '@/stores/AccountStore'; // Import the account store
+
+defineProps({
+  isOpen: Boolean,
+});
+
+const emit = defineEmits(['close']); // Emit 'close' event to close popup
+
+const activeTab = ref('login'); 
+const username = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const accountStore = useAccountStore(); // Access account store
+
+const loading = accountStore.loading; // Use loading from the store
+
+// Close popup
+function closePopup() {
+  emit('close');
+}
+
+// Login handler
+async function handleLogin() {
+  await accountStore.login(username.value, password.value);
+  if (accountStore.user) {
+    emit('close'); // Close popup on success
   }
-  
-  async function login() {
-    loading.value = true;
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: username.value,
-        password: password.value,
-      });
-  
-      if (error) {
-        console.error('Login error:', error.message);
-      } else {
-        console.log('Login successful:', data);
-        emit('authenticated', username.value); // Pass the email to the header
-        emit('close'); // Close the popup
-      }
-    } catch (err) {
-      console.error('Login error:', err.message);
-    }
-    finally{loading.value = false;}
+}
+
+// Signup handler
+async function handleSignup() {
+  if (password.value !== confirmPassword.value) {
+    console.error('Passwords do not match');
+    return;
   }
-  
-  async function signup() {
-    loading.value = true;
-    if (password.value !== confirmPassword.value) {
-      console.error('Passwords do not match');
-      return;
-    }
-  
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: username.value,
-        password: password.value,
-      });
-  
-      if (error) {
-        console.error('Sign Up error:', error.message);
-      } else {
-        console.log('Sign Up successful:', data);
-        emit('authenticated', username.value); // Pass the email to the header
-        emit('close'); // Close the popup
-      }
-    } catch (err) {
-      console.error('Sign Up error:', err.message);
-    }
-    finally{loading.value = false;}
+  await accountStore.signup(username.value, password.value);
+  if (accountStore.user) {
+    emit('close'); // Close popup on success
   }
+}
   </script>
   
   <style scoped>
