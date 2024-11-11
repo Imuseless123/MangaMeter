@@ -14,11 +14,17 @@
       <!-- User Score Column (conditionally rendered) -->
       <div v-if="isLoggedIn" class="user-col">
         <!-- Display score if rated, else show editable icon -->
-        <div v-if="userScore !== null" class="user-score-holder">{{ userScore }}</div>
-        <div v-else>
-          <span v-if="!isEditing" class="edit-icon" @click="toggleEditing">✏️</span>
-          <input v-else type="number" v-model="tempScore" @blur="submitScore" @keyup.enter="submitScore" class="score-input" />
-        </div>
+        <input
+        v-model="editableUserScore"
+        type="number"
+        placeholder="Rate"
+        min="1"
+        max="10"
+      />
+      <button @click="submitScore" :disabled="editableUserScore === ''">Submit</button>
+      <span v-if="userScore !== 'empty'" class="current-score">
+        Your Score: {{ userScore }}
+      </span>
       </div>
     </div>
   </template>

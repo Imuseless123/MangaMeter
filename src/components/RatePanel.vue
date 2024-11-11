@@ -7,7 +7,7 @@
           {{ selectedManga.name }}
         </h2>
 
-        <div class="ranking" v-if="mangaRatingsLoaded">
+        <div class="ranking" >
           <!-- Overall Ranking Row -->
           <RankingRow :isOverall="true" :overallScore="7.9" :userScore="7" />
 
@@ -18,16 +18,9 @@
             :genreId="genre.id"
             :genreName="genre.name"
             :overallScore="getGenreRating(genre.id)" 
+            :userScore="getUserScore(genre.id)"
             :isLoggedIn="isLoggedIn"
-            v-if="!ratingStore.ratingFetchError"
-            
           />
-          <p v-if="ratingStore.ratingFetchError" class="no-rating-message">
-            No ratings available for this manga.
-          </p>
-          <p v-if="mangaRatingsEmpty" class="no-rating-message">
-            No ratings yet for this manga.
-          </p>
         </div>
       </div>
     </div>
@@ -49,16 +42,18 @@ const selectedManga = computed(() => ratingStore.selectedManga);
 const isLoggedIn = computed(() => accountStore.isLoggedIn); 
 
 
-const mangaRatingsLoaded = computed(() => ratingStore.mangaPublicRatings.length > 0);
 
 const getGenreRating = (genreId) => {
   const rating = ratingStore.mangaPublicRatings.find(rating => rating.genreid === genreId);
   return rating ? rating.averagerating : 0; // Return the average rating, or 0 if not found
 };
-// Computed to check if manga ratings are empty
-const mangaRatingsEmpty = computed(() => {
-  return ratingStore.mangaPublicRatings.length === 0 && !ratingStore.ratingFetchError;
-});
+
+// Fetch the user's rating for a genre
+const getUserScore = (genreId) => {
+  const userRating = ratingStore.userRatings.find(rating => rating.genreid === genreId);
+
+  return userRating ? userRating.ratingscore : 'empty';  // Return 'empty' if no user score
+};
 // Function to update `isMobile` based on screen width
 const updateIsMobile = () => {
   isMobile.value = window.innerWidth <= 1200;
