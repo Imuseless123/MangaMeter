@@ -12,28 +12,32 @@
       </div>
   
       <!-- User Score Column (conditionally rendered) -->
-      <div v-if="isLoggedIn" class="user-col">
-        <!-- Display score if rated, else show editable icon -->
+      <div v-if="isLoggedIn" class="user-col" :class="{ 'submitted': isSubmitted }">
         <input
-        v-model="editableUserScore"
-        type="number"
-        placeholder="Rate"
-        min="1"
-        max="10"
-      />
-      <button @click="submitScore" :disabled="editableUserScore === ''">Submit</button>
-      <span v-if="userScore !== 'empty'" class="current-score">
-        Your Score: {{ userScore }}
-      </span>
+      v-model="editableUserScore"
+      type="number"
+      placeholder="Rate"
+      min="1"
+      max="10"
+      @keyup.enter="submitScore"
+      class="editable-score"
+    />
       </div>
     </div>
   </template>
   
   <script setup>
-  import { ref } from 'vue';
+import { ref, watch } from 'vue';
   import { defineProps, defineEmits } from 'vue';
+  import { useRatingStore } from '@/stores/RatingStore';
+
+
   
   const props = defineProps({
+    genreId: {
+      type: String,
+      default: '',
+    },
     genreName: {
       type: String,
       default: '',
@@ -55,8 +59,18 @@
       default: false, // Determines if the user is logged in
     }
   });
-  
-  const emits = defineEmits(['update-score']); // Event to send updated score to parent
+  const ratingStore = useRatingStore();
+  const isSubmitted = ref(false);
+  const editableUserScore = ref(''); 
+  watch(() => props.userScore, (newUserScore) => {
+  if (newUserScore !== 'empty') {
+    editableUserScore.value = newUserScore;
+  } else {
+    editableUserScore.value = ''; // If no user score, make it editable
+  }
+}, { immediate: true }); // Make sure the watcher runs on initial mount
+
+
   
   // State for editing score
   const isEditing = ref(false);
@@ -69,11 +83,16 @@
   }
   
   // Submit score and emit to parent component
-  function submitScore() {
-    if (tempScore.value) {
-      emits('update-score', { genreName: props.genreName, score: tempScore.value });
-      isEditing.value = false;
-    }
+  async function submitScore() {
+    if (editableUserScore.value !== '') {
+    await ratingStore.rateMangaGenre(props.genreId, editableUserScore.value);
+    isSubmitted.value = true;
+
+    // Reset submission feedback after a short delay
+    setTimeout(() => {
+      isSubmitted.value = false;
+    }, 1500);
+  }
   }
   </script>
   
@@ -99,10 +118,11 @@
   }
   
   .user-col{
-    width: 18%;
+    width: 16%;
     font-size: 18px;
     justify-content: center;
-    /* background-color: yellowgreen; */
+    background-color: #515552;
+    border-radius: 0 5px 5px 0;
     margin: auto 0;
   }
   
@@ -121,25 +141,34 @@
     background-color: #515552;
     border-radius: 0 5px 5px 0;
   }
-  .edit-icon {
-  cursor: pointer;
-  color: gray;
-  font-size: 1.2em;
-  width: 100%;
-    padding: 2px 0;
-    text-align: center;
-    background-color: #515552;
-    border-radius: 0 5px 5px 0;
+
+.user-col.submitted .editable-score {
+  background-color: #e0f7fa; /* Slight color change on submit */
 }
-
-.score-input {
-    width: 100%;
-    padding: 2px 0;
-    text-align: center;
-    background-color: #515552;
-    border-radius: 0 5px 5px 0;
-
+/* Remove the up and down arrows for number input */
+.editable-score {
+  width: 50px;
   text-align: center;
+  border: none;
+  background: transparent;
+  color: #000;
+  padding: 5px;
+  font-size: 16px;
+  outline: none;
+  -moz-appearance: textfield;  /* Firefox */
+  -webkit-appearance: none;    /* Safari and Chrome */
+  appearance: none;            /* Standard for other browsers */
 }
+
+.editable-score::-webkit-outer-spin-button,
+.editable-score::-webkit-inner-spin-button {
+  -webkit-appearance: none;   /* Remove the spinner in Chrome and Safari */
+  margin: 0;
+}
+
+.editable-score[type="number"] {
+  -moz-appearance: textfield;  /* Remove spinner in Firefox */
+}
+
   </style>
   

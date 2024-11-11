@@ -48,6 +48,37 @@ export const useRatingStore = defineStore('rating', {
         console.error("Error fetching user ratings:", error);
         this.userRatings = [];
       }
-    }
+    },
+    async rateMangaGenre(genreId, score) {
+      const accountStore = useAccountStore();
+      const userId = accountStore.user?.id;
+
+      // Check if the user is logged in
+      if (!accountStore.isLoggedIn || !userId) {
+        console.error("User is not logged in. Cannot submit rating.");
+        return;
+      }
+      console.log(`http://mangameterapi.littlebutenough.com/addRating?mangaId=${this.selectedManga.id}&genre=${genreId}&userId=${userId}&rating=${score}`);
+      try {
+        // Send the user's rating for the genre to the backend
+      const response = await axios.get(`https://mangameterapi.littlebutenough.com/addRating?mangaId=${this.selectedManga.id}&genre=${genreId}&userId=${userId}&rating=${score}`);
+        console.log(response);
+        if (response.status === 200) {
+          console.log("Rating submitted successfully:", response.data);
+
+          // Update or add the rating in the userRatings array
+          const existingRating = this.userRatings.find(rating => rating.genreid === genreId);
+          if (existingRating) {
+            existingRating.userscore = score; // Update the score if rating exists
+          } else {
+            this.userRatings.push({ genreid: genreId, userscore: score }); // Add new rating if not present
+          }
+        } else {
+          console.error("Failed to submit rating, received status:", response.status);
+        }
+      } catch (error) {
+        console.error("Error submitting rating:", error);
+      }
+    },
   },
 });
