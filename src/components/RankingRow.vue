@@ -28,7 +28,7 @@
   
   <script setup>
 import { ref, watch } from 'vue';
-  import { defineProps, defineEmits } from 'vue';
+  import { defineProps } from 'vue';
   import { useRatingStore } from '@/stores/RatingStore';
 
 

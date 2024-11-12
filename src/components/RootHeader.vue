@@ -14,6 +14,9 @@
         <div>
           <RouterLink id="leaderboardLink" class="text font_roboto" @click="navigating($event)" to="/leaderboard">Leaderboard</RouterLink>
         </div>
+        <div v-if="accountStore.isLoggedIn">
+          <RouterLink id="favoriteLink" class="text font_roboto" @click="navigating($event)" to="/favorite">Favorite</RouterLink>
+        </div>
         
         <!-- Move auth buttons into the navigation -->
         <div class="auth-buttons">
@@ -55,7 +58,7 @@ onMounted(() => {
   homeLink = document.getElementById('homeLink');
   searchLink = document.getElementById('searchLink');
   leaderboardLink = document.getElementById('leaderboardLink');
-});
+});leaderboardLink
 
 function navigating(event) {
   resetNavigate();

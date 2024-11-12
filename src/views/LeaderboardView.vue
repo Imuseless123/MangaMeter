@@ -1,21 +1,22 @@
 <template>
   <div class="outer-container">
     <div class="scroll-container" ref="scrollContainer">
-      <LeaderboardPanel
+      <!-- <LeaderboardPanel
         v-for="(genre, index) in genres"
-        :key="index"
+        :key="genre.id"
         :class="[
           'rectangle', 
           { 'selected-rectangle': selectedIndex === index }
         ]"
-        :genre="genre"
+        :genreName="genre.name"
+        :genreId="genre.id"
         :topManga="'Reincarnated as the Lazy and Villainous Noble, I Broke the Scenario and Became the Most Formidable With Extraordinary Magic'"
         :secondManga="'asdsaqw'"
         :thirdManga="'asdasdcvs'"
         @click="selectGenre(genre)"
       >
-        {{ genre }}
-      </LeaderboardPanel>
+        {{ genre.name }}
+      </LeaderboardPanel> -->
     </div>
     <button class="overlay-button" @click="toggleOverlay">Genres</button>
     <div class="overlay" v-show="isOverlayVisible">
@@ -36,12 +37,26 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
 import LeaderboardPanel from '../components/LeaderboardPanel.vue';
-const genres = ['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller'];
+const genres = ref([]);
 const scrollContainer = ref(null);
 const isOverlayVisible = ref(false);
 const searchQuery = ref('');
 const selectedIndex = ref(null);
+
+const fetchGenres = async () => {
+  try {
+    const response = await axios.get('https://mangameterapi.littlebutenough.com/genres');
+    genres.value = response.data.map(item => ({
+      id: item.id,
+      name: item.name
+    }));
+    console.log(genres.value)
+  } catch (error) {
+    console.error("Error fetching genres:", error);
+  }
+};
 
 const selectGenre = (selectedGenre) => {
   // Find the index of the selected genre in the original genres array
@@ -75,7 +90,8 @@ const filteredGenres = computed(() => {
   return genres.filter(genre => genre.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
 
-onMounted(() => {
+onMounted(async () => {
+  await fetchGenres();
   const container = scrollContainer.value;
   const itemWidth = container.scrollWidth / genres.length;
   

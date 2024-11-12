@@ -22,24 +22,28 @@
 
     <!-- Section 5: More Details Button -->
     <div class="panel-section details-button-section">
-      <button @click="showDetails">More details</button>
+      <button @click="goToLeaderboardDetail">More details</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps } from 'vue';
+import { useRouter } from 'vue-router';
 
-defineProps({
-  genre: String,
+const props = defineProps({
+  genreName: String,
+  genreId: String,
   topManga: String,
   secondManga: String,
   thirdManga: String,
 });
-
-const showDetails = () => {
-  // Logic for showing more details about the genre or manga
+const router = useRouter();
+const goToLeaderboardDetail = () => {
+  // Use props.genre in the params for navigation
+  router.push({ name: 'LeaderboardDetail', params: { genreId: props.genre } });
 };
+
 </script>
 
 <style scoped>

@@ -58,7 +58,7 @@ export const useRatingStore = defineStore('rating', {
         console.error("User is not logged in. Cannot submit rating.");
         return;
       }
-      console.log(`http://mangameterapi.littlebutenough.com/addRating?mangaId=${this.selectedManga.id}&genre=${genreId}&userId=${userId}&rating=${score}`);
+      console.log(`https://mangameterapi.littlebutenough.com/addRating?mangaId=${this.selectedManga.id}&genre=${genreId}&userId=${userId}&rating=${score}`);
       try {
         // Send the user's rating for the genre to the backend
       const response = await axios.get(`https://mangameterapi.littlebutenough.com/addRating?mangaId=${this.selectedManga.id}&genre=${genreId}&userId=${userId}&rating=${score}`);
