@@ -1,7 +1,7 @@
 <template>
   <div class="outer-container">
     <div class="scroll-container" ref="scrollContainer">
-      <!-- <LeaderboardPanel
+      <LeaderboardPanel
         v-for="(genre, index) in genres"
         :key="genre.id"
         :class="[
@@ -10,13 +10,12 @@
         ]"
         :genreName="genre.name"
         :genreId="genre.id"
-        :topManga="'Reincarnated as the Lazy and Villainous Noble, I Broke the Scenario and Became the Most Formidable With Extraordinary Magic'"
-        :secondManga="'asdsaqw'"
-        :thirdManga="'asdasdcvs'"
         @click="selectGenre(genre)"
       >
         {{ genre.name }}
-      </LeaderboardPanel> -->
+      </LeaderboardPanel>
+      <span v-for="(genre, index) in genres">test</span>
+      
     </div>
     <button class="overlay-button" @click="toggleOverlay">Genres</button>
     <div class="overlay" v-show="isOverlayVisible">
@@ -27,7 +26,7 @@
           :key="index" 
           class="genre-item"
           @click="selectGenre(genre)">
-          {{ genre }}
+          {{ genre.name }}
         </div>
       </div>
     </div>
@@ -60,21 +59,24 @@ const fetchGenres = async () => {
 
 const selectGenre = (selectedGenre) => {
   // Find the index of the selected genre in the original genres array
-  const index = genres.indexOf(selectedGenre);
+  const index = genres.value.indexOf(selectedGenre);
   
   if (index !== -1) {
     selectedIndex.value = index; // Set the selected index to the original index
     isOverlayVisible.value = false;
-
-    // Scroll the container to the selected rectangle smoothly
     const container = scrollContainer.value;
-    const rectangles = container.children;
-    const selectedRectangle = rectangles[index];
+    if (container) {
+      // Scroll the container to the selected rectangle smoothly
+      
+      const rectangles = container.children;
+      const selectedRectangle = rectangles[index];
+      
+      container.scrollTo({
+        left: selectedRectangle.offsetLeft - (container.clientWidth / 2) + (selectedRectangle.clientWidth / 2),
+        behavior: 'smooth'
+      });
+    }
     
-    container.scrollTo({
-      left: selectedRectangle.offsetLeft - (container.clientWidth / 2) + (selectedRectangle.clientWidth / 2),
-      behavior: 'smooth'
-    });
   }
 };
 
@@ -84,11 +86,13 @@ const toggleOverlay = () => {
 };
 
 
-
 const filteredGenres = computed(() => {
-  if (!searchQuery.value) return genres;
-  return genres.filter(genre => genre.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  if (!searchQuery.value) return genres.value;
+  return genres.value.filter(genre => 
+    genre.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
 });
+
 
 onMounted(async () => {
   await fetchGenres();

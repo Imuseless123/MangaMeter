@@ -1,7 +1,7 @@
 <template>
   <div class="leaderboard-panel">
     <div class="panel-section genre-name">
-      <h3>{{ genre }}</h3>
+      <h3>{{ genreName }}</h3>
     </div>
     <div class="panel-section top-manga">
         <div class="manga-background">
@@ -28,22 +28,48 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+
+const topManga = ref('');
+const secondManga = ref('');
+const thirdManga = ref('');
 
 const props = defineProps({
   genreName: String,
   genreId: String,
-  topManga: String,
-  secondManga: String,
-  thirdManga: String,
 });
 const router = useRouter();
 const goToLeaderboardDetail = () => {
   // Use props.genre in the params for navigation
-  router.push({ name: 'LeaderboardDetail', params: { genreId: props.genre } });
+  router.push({ name: 'LeaderboardDetail', params: { genreId: props.genreId } });
 };
 
+const fetchTopThree = async () =>{
+  try {
+      const response = await axios.get(`https://mangameterapi.littlebutenough.com/getAverGRating/`, {
+        params: {
+          genreId: props.genreId,
+          limit: 3,
+          page: 1,
+          sortDescending: 1
+        }
+      });
+      console.log(response);
+      const mangas = response.data.data;
+      if (mangas.length > 0) topManga.value = mangas[0].mangaName || '';
+      if (mangas.length > 1) secondManga.value = mangas[1].mangaName || '';
+      if (mangas.length > 2) thirdManga.value = mangas[2].mangaName || '';
+      console.log(mangas);
+
+    } catch (error) {
+      console.error("Error fetching manga:", error);
+    }
+}
+onMounted(async () => {
+  fetchTopThree();
+});
 </script>
 
 <style scoped>

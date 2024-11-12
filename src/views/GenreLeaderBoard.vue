@@ -3,7 +3,9 @@
       <div class="background-image"></div>
       <div class="background-overlay"></div>
       <div class="left-half">
-        <LeaderBoardList/>
+        <LeaderBoardList
+        :genreId="props.genreId"
+        />
       </div>
       <transition name="slide-up">
         <div

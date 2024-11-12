@@ -47,7 +47,7 @@
   
   </template>
   <script setup>
-  import { ref,nextTick, computed } from 'vue';
+  import { ref,nextTick, computed, onMounted } from 'vue';
   import axios from 'axios';
   import MangaSearchEntry from './MangaSearchEntry.vue';
   import { useRatingStore } from '@/stores/RatingStore';
@@ -60,7 +60,6 @@
   const selectedMangaIndex = ref(null);
   const selectedManga = ref(null);
   const mangas = ref([]);
-  const searchTerm = ref('');
   const ratingStore = useRatingStore();
   const currentPage = ref(1);
   const total = ref(0);
@@ -69,7 +68,6 @@
     return Math.ceil(total.value / 10); // 10 is the number of manga per page
   });
   const fetchMangas = async () => {
-    if (!searchTerm.value.trim()) return;
     isLoading.value = true;
   
     try {
@@ -78,7 +76,7 @@
           genreId: props.genreId,
           limit: 10,
           page: currentPage.value,
-          order: 'desc'
+          sortDescending: 1
         }
       });
       console.log(response);
@@ -137,6 +135,12 @@
     });
     console.log("Manga selected: ", ratingStore.selectedManga); // Log the selected manga from the store
   };
+
+  onMounted(async () => {
+    console.log(props.genreId);
+
+    fetchMangas();
+  });
   </script>
   <style scoped>
   
