@@ -50,6 +50,22 @@ export const useAccountStore = defineStore('account', () => {
       loading.value = false;
     }
   }
+  // OAuth login with Google
+  async function loginWithGoogle() {
+    loading.value = true;
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+      });
+      if (error) {
+        console.error('Google OAuth login error:', error.message);
+      }
+    } catch (err) {
+      console.error('OAuth login error:', err.message);
+    } finally {
+      loading.value = false;
+    }
+  }
 
   // Logout function
   async function logout() {
@@ -65,7 +81,7 @@ export const useAccountStore = defineStore('account', () => {
       loading.value = false;
     }
   }
-
+  checkSession();
   return {
     user,
     loading,
@@ -74,5 +90,6 @@ export const useAccountStore = defineStore('account', () => {
     signup,
     logout,
     checkSession,
+    loginWithGoogle,
   };
 });

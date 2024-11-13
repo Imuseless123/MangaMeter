@@ -9,7 +9,7 @@
 
         <div class="ranking" >
           <!-- Overall Ranking Row -->
-          <RankingRow :isOverall="true" :overallScore="7.9" :userScore="7" />
+          <RankingRow :isOverall="true" :overallScore="overallScore"  />
 
           <!-- Genre Ranking Rows -->
           <RankingRow
@@ -36,16 +36,24 @@ import RankingRow from './RankingRow.vue';
 const ratingStore = useRatingStore();
 const accountStore = useAccountStore();
 const isMobile = ref(false);
+const overalScore = ref(null);
 
 // Use computed property to get the selected manga
 const selectedManga = computed(() => ratingStore.selectedManga);
 const isLoggedIn = computed(() => accountStore.isLoggedIn); 
 
 
+const overallScore = computed(() => {
+  const ratings = ratingStore.mangaPublicRatings.map(rating => rating.averagerating);
+  
+  if (ratings.length === 0) return 'unrated'; // Handle cases where there are no ratings
 
+  const sum = ratings.reduce((acc, score) => acc + score, 0);
+  return (sum / ratings.length).toFixed(1); // Calculate the average and format to 1 decimal place
+});
 const getGenreRating = (genreId) => {
   const rating = ratingStore.mangaPublicRatings.find(rating => rating.genreid === genreId);
-  return rating ? rating.averagerating : 0; // Return the average rating, or 0 if not found
+  return rating ? rating.averagerating : 'unrated';  // Return "unrated" if no rating is found
 };
 
 // Fetch the user's rating for a genre

@@ -24,6 +24,7 @@
           <span v-else>Sign Up</span>
         </button>
         </div>
+        <button @click="loginWithGoogle">Login with Google</button>
       </div>
     </div>
   </template>
@@ -36,6 +37,8 @@ defineProps({
   isOpen: Boolean,
 });
 
+
+
 const emit = defineEmits(['close']); // Emit 'close' event to close popup
 
 const activeTab = ref('login'); 
@@ -46,6 +49,10 @@ const accountStore = useAccountStore(); // Access account store
 
 const loading = accountStore.loading; // Use loading from the store
 
+
+const loginWithGoogle = async () => {
+  await accountStore.loginWithGoogle();
+};
 // Close popup
 function closePopup() {
   emit('close');

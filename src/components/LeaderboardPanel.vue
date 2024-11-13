@@ -4,7 +4,7 @@
       <h3>{{ genreName }}</h3>
     </div>
     <div class="panel-section top-manga">
-        <div class="manga-background">
+        <div class="manga-background" :style="{ backgroundImage: topMangaCoverUrl ? `url(${topMangaCoverUrl})` : 'url(/placeholder_image.png)' }">
             <div class="manga-title-wrapper">
                 <p class="manga-title">#1<br /> {{ topManga }}</p>
             </div>
@@ -35,6 +35,7 @@ import axios from 'axios';
 const topManga = ref('');
 const secondManga = ref('');
 const thirdManga = ref('');
+const topMangaCoverUrl = ref('');
 
 const props = defineProps({
   genreName: String,
@@ -58,7 +59,10 @@ const fetchTopThree = async () =>{
       });
       console.log(response);
       const mangas = response.data.data;
-      if (mangas.length > 0) topManga.value = mangas[0].mangaName || '';
+      if (mangas.length > 0) {
+        topManga.value = mangas[0].mangaName || '';
+        topMangaCoverUrl.value = `https://uploads.mangadex.org/covers/${mangas[0].mangaId}/${mangas[0].coverFileName}`;
+      }
       if (mangas.length > 1) secondManga.value = mangas[1].mangaName || '';
       if (mangas.length > 2) thirdManga.value = mangas[2].mangaName || '';
       console.log(mangas);
@@ -92,7 +96,7 @@ onMounted(async () => {
 
 /* Genre name section */
 .genre-name {
-  background-color: #3498db;
+  background-color: #21292e;
   width: 100%;
   flex: 0.5;
 }
@@ -100,7 +104,7 @@ onMounted(async () => {
 /* Top manga section (largest) */
 .top-manga {
   position: relative;
-  background-color: #2980b9;
+  background-color: #21292e;
   width: 100%;
   overflow: hidden;
 
@@ -109,7 +113,7 @@ onMounted(async () => {
 
 /* Second manga section */
 .second-manga {
-  background-color: #3498db;
+  background-color: #2f373b;
   width: 100%;
 
   flex: 1;
@@ -117,7 +121,7 @@ onMounted(async () => {
 
 /* Third manga section */
 .third-manga {
-  background-color: #2980b9;
+  background-color: #21292e;
   width: 100%;
 
   flex: 1;
