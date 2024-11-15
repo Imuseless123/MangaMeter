@@ -1,21 +1,5 @@
 <template>
     <div>
-      <!-- <PrimeAvatar
-        class="account-icon"
-        icon="pi pi-user"
-        v-if="!isLoggedIn"
-      />
-      <PrimeAvatar
-        class="account-icon"
-        :label="userInitial"
-        v-else
-      />
-      <button
-        @click="handleButtonClick"
-        class="p-button-outlined button-label font_roboto"
-      >
-        {{ buttonText }}
-      </button> -->
       <ButtonGroup >
         <Button 
             v-if="accountStore.isLoggedIn"
@@ -33,7 +17,11 @@
             @click="logout"/>
       </ButtonGroup>
     </div>
-    <LoginPopup v-if="showLoginPopup" @close="showLoginPopup = false" @authenticated="handleAuthenticated" />
+    
+    <LoginPopup 
+      :visible="showLoginPopup" 
+      @close="showLoginPopup = false" 
+    />
   </template>
   
   <script setup>
@@ -46,10 +34,6 @@
 
   
   const accountStore = useAccountStore();
-  
-  const isLoggedIn = computed(() => !!accountStore.user);
-  const userInitial = computed(() => accountStore.user?.email.charAt(0).toUpperCase() || '');
-  const buttonText = computed(() => (isLoggedIn.value ? 'Logout' : 'Login'));
   
   const showLoginPopup = ref(false); // Boolean to control login popup visibility
 

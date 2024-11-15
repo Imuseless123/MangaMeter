@@ -21,7 +21,9 @@
       @select="handleSelectSuggest" 
       placeholder="Search for a manga..." 
       style = "width: 100%"
-      inputStyle = "width: 100%; background: linear-gradient(to right, #521414 0%, #3E240F 53%, #A6721F 100%)"
+      inputStyle = "width: 100%; background: linear-gradient(to right, #521414 0%, #3E240F 53%, #A6721F 100%); border: 0px "
+      input-class="searchbar"
+
       >
       <template #item="slotProps">
         <div>{{ slotProps.item.attributes.title.en }}</div>
@@ -322,6 +324,8 @@ const handleSelectSuggest = (selectedItem) => {
   width: 100%;
   position: absolute;
 }
-
+.searchbar{
+  --p-inputtext-border-color :transparent;
+}
 
 </style>

@@ -21,18 +21,13 @@
       <div class="spacer"></div>
       <AccountButton />
     </div>
-    <LoginPopup
-      v-if="showLoginPopup"
-      @close="showLoginPopup = false"
-      @authenticated="handleAuthenticated"
-    />
+
   </div>
 </template>
 <script setup>
 import { ref, watch  } from 'vue';
 import { useAccountStore } from '@/stores/AccountStore'; // Import account store
 import { useRouter } from 'vue-router'; // Import Vue Router for navigation
-import LoginPopup from './LoginPopup.vue';
 import AccountButton from './AccountButton.vue';
 import TabMenu from 'primevue/tabmenu';
 
@@ -112,6 +107,7 @@ function handleAuthenticated() {
 }
 
 .tabbar {
+  padding-left: 20px;
   --p-tabmenu-tablist-background: transparent; /* Set to transparent */
 }
 .spacer{flex:1}
