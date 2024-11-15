@@ -12,9 +12,12 @@
     "serve": "serve -s dist -l 5173"
   },
   "dependencies": {
+    "@primevue/themes": "^4.2.2",
     "@supabase/supabase-js": "^2.45.6",
     "dotenv": "^16.4.5",
     "pinia": "^2.1.7",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.2.2",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },

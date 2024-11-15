@@ -6,13 +6,27 @@
   <div class="container">
   
   <div class= "search">
-    <input 
+    <!-- <input 
         type="text" 
         placeholder="Search..." 
-        class="search-bar" 
+        class="search-bar1" 
         v-model="searchTerm" 
         @keyup.enter="fetchMangas"
-      />
+      /> -->
+      <AutoComplete 
+      v-model="searchTerm" 
+      :suggestions="mangaSuggestions" 
+      @complete="searchMangas" 
+      @keyup.enter="fetchMangas"
+      @select="handleSelectSuggest" 
+      placeholder="Search for a manga..." 
+      style = "width: 100%"
+      inputStyle = "width: 100%; background: linear-gradient(to right, #521414 0%, #3E240F 53%, #A6721F 100%)"
+      >
+      <template #item="slotProps">
+        <div>{{ slotProps.item.attributes.title.en }}</div>
+      </template>
+    </AutoComplete>
   </div>
   <div class="result-container">
     <div v-if="isLoading" class="loading-indicator">
@@ -20,22 +34,22 @@
     </div>
     <div v-else class="loaded-container">
       <div class="page">
-      <div class="pagination" v-if="mangas.length > 0">
-        <button @click="changePage(1)" :disabled="currentPage === 1"><<</button>
-        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"><</button>
-        <span v-for="page in visiblePages" :key="page">
-          <button 
-            @click="changePage(page)" 
-            :class="{ active: currentPage === page }"
-            :disabled="currentPage === page"
-          >
-            {{ page }}
-          </button>
-        </span>
-        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">></button>
-        <button @click="changePage(totalPages)" :disabled="currentPage === totalPages">>></button>
+        <div class="pagination" v-if="mangas.length > 0">
+          <button @click="changePage(1)" :disabled="currentPage === 1"><<</button>
+          <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"><</button>
+          <span v-for="page in visiblePages" :key="page">
+            <button 
+              @click="changePage(page)" 
+              :class="{ active: currentPage === page }"
+              :disabled="currentPage === page"
+            >
+              {{ page }}
+            </button>
+          </span>
+          <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">></button>
+          <button @click="changePage(totalPages)" :disabled="currentPage === totalPages">>></button>
+        </div>
       </div>
-    </div>
 
     <div class="rectangle-list">
       <MangaSearchEntry 
@@ -60,6 +74,8 @@ import { ref,nextTick, computed } from 'vue';
 import axios from 'axios';
 import MangaSearchEntry from './MangaSearchEntry.vue';
 import { useRatingStore } from '@/stores/RatingStore';
+import AutoComplete from 'primevue/autocomplete';
+const mangaSuggestions = ref([]);
 const selectedMangaIndex = ref(null);
 const selectedManga = ref(null);
 const mangas = ref([]);
@@ -140,13 +156,28 @@ const selectManga = async (index) => {
   });
   console.log("Manga selected: ", ratingStore.selectedManga); // Log the selected manga from the store
 };
+const searchMangas = async (event) => {
+  // Fetch data from the MangaDex API
+  const query = event.query; // Get the query string typed by the user
+
+  if (query.length >= 3) { // Trigger search after 3 characters
+    try {
+      const response = await fetch(`https://api.mangadex.org/manga?limit=5&title=${query}&includedTagsMode=AND&excludedTagsMode=OR&contentRating%5B%5D=safe&contentRating%5B%5D=suggestive&contentRating%5B%5D=erotica&order%5BlatestUploadedChapter%5D=desc`);
+      const data = await response.json();
+
+      // Extract the titles from the response and populate the suggestions
+      mangaSuggestions.value = data.data.map(item => item.attributes.title.en);
+    } catch (error) {
+      console.error('Error fetching manga data:', error);
+    }
+  }
+};
+const handleSelectSuggest = (selectedItem) => {
+  fetchMangas(selectedItem);
+};
 </script>
 <style scoped>
 
-.search-bar:focus{
-  outline: 2px solid #A6721F;
-  outline-offset: 2px;
-}
 
 .container {
   position: relative;
@@ -181,15 +212,6 @@ const selectManga = async (index) => {
   z-index: 10;
   background: linear-gradient(to top, #000000 0%, #00000000 100%);
 }
-.search-bar {
-  width: 100%;
-  height: 40px;
-  border: 0px;
-  border-radius: 10px;
-  background: linear-gradient(to right, #521414 0%, #3E240F 53%, #A6721F 100%);
-  color: #FFFFFF;
-  outline: none; /* Removes the default outline */
-}
 .rectangle-list {
   display: flex;           /* Enable flexbox layout */
   flex-direction: column; /* Stack children vertically */
@@ -198,6 +220,8 @@ const selectManga = async (index) => {
   width: 100%;           /* Ensure it takes the full width */
   gap: 40px;            /* Set the gap between child components */
   overflow-x: visible;
+  scrollbar-width: thin;               /* Makes scrollbar thinner */
+  scrollbar-color: #A6721F transparent; 
 }
 .rectangle-list::-webkit-scrollbar {
   width: 8px;  padding-right: 15px;
@@ -298,5 +322,6 @@ const selectManga = async (index) => {
   width: 100%;
   position: absolute;
 }
+
 
 </style>
