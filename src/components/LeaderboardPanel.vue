@@ -22,7 +22,7 @@
 
     <!-- Section 5: More Details Button -->
     <div class="panel-section details-button-section">
-      <button @click="goToLeaderboardDetail">More details</button>
+      <Button @click="goToLeaderboardDetail">More details</Button>
     </div>
   </div>
 </template>
@@ -31,6 +31,7 @@
 import { defineProps, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import Button from 'primevue/button';
 
 const topManga = ref('');
 const secondManga = ref('');
@@ -90,7 +91,6 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 10px;
   color: white;
 }
 
@@ -129,7 +129,7 @@ onMounted(async () => {
 
 /* More details button section */
 .details-button-section {
-  background-color: #2ecc71;
+  background-color: #aa7a2b;
   width: 100%;
 
   flex: 0.5;
@@ -149,7 +149,7 @@ onMounted(async () => {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 70%, transparent);; /* Dark fade from bottom to top */
+    background: linear-gradient(0deg, #131618 0%, rgba(0,0,0,0.6) 70%, transparent);; /* Dark fade from bottom to top */
     z-index: 1; /* Ensure the gradient is above the image but below the text */
 }
 
@@ -189,14 +189,10 @@ onMounted(async () => {
 
 button {
   padding: 10px 15px;
-  background-color: #27ae60;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #229954;
-}
 </style>

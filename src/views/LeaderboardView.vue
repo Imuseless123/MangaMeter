@@ -17,9 +17,9 @@
       <span v-for="(genre, index) in genres">test</span>
       
     </div>
-    <button class="overlay-button" @click="toggleOverlay">Genres</button>
+    <Button class="overlay-button" @click="toggleOverlay">Genres ></Button>
     <div class="overlay" v-show="isOverlayVisible">
-      <input type="text" placeholder="Search genres..." class="search-bar" v-model="searchQuery" />
+      <InputText type="text" placeholder="Search genres..." class="search-bar" v-model="searchQuery" />
       <div class="genre-list">
         <div 
           v-for="(genre, index) in filteredGenres" 
@@ -43,6 +43,9 @@ const scrollContainer = ref(null);
 const isOverlayVisible = ref(false);
 const searchQuery = ref('');
 const selectedIndex = ref(null);
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+
 
 const fetchGenres = async () => {
   try {
@@ -163,11 +166,7 @@ onMounted(async () => {
   top: 10px;
   left: 10px;
   z-index: 10;
-  padding: 10px 20px;
-  background-color: #3498db;
-  color: white;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
 }
 /* Overlay styles */
@@ -181,7 +180,7 @@ onMounted(async () => {
   z-index: 20; /* Ensure it is above other elements */
 }
 .search-bar {
-  width: 100%;
+  width: 60%;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;

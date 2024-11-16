@@ -24,14 +24,8 @@
         inputStyle="width: 120px; padding:6px 40px 6px; height: 100%; font-size: 1.2rem; border: 0px"
         style="padding:0px 0px 0px; display: flex;"
       />
-      <!-- <Button
-        v-if="editableUserScore"
-        label="Submit"
-        icon="pi pi-check"
-        @click="submitScore"
-        class="submit-btn"
-      /> -->
     </div>
+    <Toast />
   </div>
 </template>
 
@@ -41,6 +35,9 @@ import { defineProps } from 'vue';
 import { useRatingStore } from '@/stores/RatingStore';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast();
 
 const props = defineProps({
   genreId: {
@@ -76,27 +73,47 @@ const editableUserScore = ref(null);
 watch(
   () => props.userScore,
   (newUserScore) => {
-    if (newUserScore !== 'empty') {
-      editableUserScore.value = newUserScore;
-    } else {
-      editableUserScore.value = null; // If no user score, make it editable
+    // Only update `editableUserScore` if the user hasn't just submitted a score
+    if (!isSubmitted.value) {
+      if (newUserScore !== 'empty') {
+        editableUserScore.value = newUserScore;
+      } else {
+        editableUserScore.value = null; // If no user score, make it editable
+      }
     }
   },
-  { immediate: true } // Make sure the watcher runs on initial mount
+  { immediate: true }
 );
 
-// Submit score and emit to parent component
+
 async function submitScore() {
   if (editableUserScore.value !== null) {
-    await ratingStore.rateMangaGenre(props.genreId, editableUserScore.value);
-    isSubmitted.value = true;
+    try {
+      isSubmitted.value = true; // Prevent interference during submission
+      await ratingStore.rateMangaGenre(props.genreId, editableUserScore.value);
 
-    // Reset submission feedback after a short delay
-    setTimeout(() => {
+
+      // Show success toast message
+      toast.add({
+        severity: "success",
+        summary: "Score Submitted",
+        detail: `Your score of ${editableUserScore.value} has been recorded.`,
+        life: 3000,
+      });
+    } catch (error) {
+      // Show error toast message in case of failure
+      toast.add({
+        severity: "error",
+        summary: "Submission Failed",
+        detail: "There was an issue submitting your score. Please try again.",
+        life: 3000,
+      });
+    } finally {
       isSubmitted.value = false;
-    }, 1500);
+    }
   }
 }
+
 </script>
 
 <style scoped>
@@ -143,7 +160,7 @@ async function submitScore() {
 }
 
 .user-col.submitted {
-  background-color: #e0f7fa; /* Slight color change on submit */
+  background-color: #969696; /* Slight color change on submit */
 }
 
 .editable-score {
