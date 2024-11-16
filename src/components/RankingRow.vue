@@ -1,90 +1,93 @@
 <template>
-    <div class="ranking-row">
-      <!-- Genre or Overall Label -->
-      <div class="genre-col">
-        <strong v-if="isOverall">Overall:</strong>
-        <span v-else>{{ genreName }}:</span>
-      </div>
-      
-      <!-- Overall Score Column -->
-      <div class="overall-col">
-        <div class="score-holder">{{ overallScore }}</div>
-      </div>
-  
-      <!-- User Score Column (conditionally rendered) -->
-      <div v-if="isLoggedIn" class="user-col" :class="{ 'submitted': isSubmitted }">
-        <input
-      v-model="editableUserScore"
-      type="number"
-      placeholder="Rate"
-      min="1"
-      max="10"
-      @keyup.enter="submitScore"
-      class="editable-score"
-    />
-      </div>
+  <div class="ranking-row">
+    <!-- Genre or Overall Label -->
+    <div class="genre-col">
+      <strong v-if="isOverall">Overall:</strong>
+      <span v-else>{{ genreName }}:</span>
     </div>
-  </template>
-  
-  <script setup>
+
+    <!-- Overall Score Column -->
+    <div class="overall-col">
+      <div class="score-holder">{{ overallScore }}</div>
+    </div>
+
+    <!-- User Score Column (conditionally rendered) -->
+    <div v-if="isLoggedIn" class="user-col" :class="{ 'submitted': isSubmitted }">
+      <InputNumber
+        v-model="editableUserScore"
+        :min="1"
+        :max="10"
+        showButtons
+        placeholder="_"
+        @keypress.enter="submitScore"
+        class="editable-score"
+        inputStyle="width: 120px; padding:6px 40px 6px; height: 100%; font-size: 1.2rem; border: 0px"
+        style="padding:0px 0px 0px; display: flex;"
+      />
+      <!-- <Button
+        v-if="editableUserScore"
+        label="Submit"
+        icon="pi pi-check"
+        @click="submitScore"
+        class="submit-btn"
+      /> -->
+    </div>
+  </div>
+</template>
+
+<script setup>
 import { ref, watch } from 'vue';
-  import { defineProps } from 'vue';
-  import { useRatingStore } from '@/stores/RatingStore';
+import { defineProps } from 'vue';
+import { useRatingStore } from '@/stores/RatingStore';
+import InputNumber from 'primevue/inputnumber';
+import Button from 'primevue/button';
 
+const props = defineProps({
+  genreId: {
+    type: String,
+    default: '',
+  },
+  genreName: {
+    type: String,
+    default: '',
+  },
+  overallScore: {
+    type: Number,
+    default: null,
+  },
+  userScore: {
+    type: [String, Number, null],
+    default: null, // User score, null if not rated yet
+  },
+  isOverall: {
+    type: Boolean,
+    default: false,
+  },
+  isLoggedIn: {
+    type: Boolean,
+    default: false, // Determines if the user is logged in
+  },
+});
 
-  
-  const props = defineProps({
-    genreId: {
-      type: String,
-      default: '',
-    },
-    genreName: {
-      type: String,
-      default: '',
-    },
-    overallScore: {
-      type:  Number,
-      default: null,
-    },
-    userScore: {
-      type: [String, Number, null],
-      default: null, // User score, null if not rated yet
-    },
-    isOverall: {
-      type: Boolean,
-      default: false,
-    },
-    isLoggedIn: {
-      type: Boolean,
-      default: false, // Determines if the user is logged in
+const ratingStore = useRatingStore();
+const isSubmitted = ref(false);
+const editableUserScore = ref(null);
+
+watch(
+  () => props.userScore,
+  (newUserScore) => {
+    if (newUserScore !== 'empty') {
+      editableUserScore.value = newUserScore;
+    } else {
+      editableUserScore.value = null; // If no user score, make it editable
     }
-  });
-  const ratingStore = useRatingStore();
-  const isSubmitted = ref(false);
-  const editableUserScore = ref(''); 
-  watch(() => props.userScore, (newUserScore) => {
-  if (newUserScore !== 'empty') {
-    editableUserScore.value = newUserScore;
-  } else {
-    editableUserScore.value = ''; // If no user score, make it editable
-  }
-}, { immediate: true }); // Make sure the watcher runs on initial mount
+  },
+  { immediate: true } // Make sure the watcher runs on initial mount
+);
 
-
-  
-  // State for editing score
-  const isEditing = ref(false);
-  const tempScore = ref(props.userScore || '');
-  
-  // Toggle editing mode
-  function toggleEditing() {
-    isEditing.value = !isEditing.value;
-    tempScore.value = props.userScore || '';
-  }
-  
-  // Submit score and emit to parent component
-  async function submitScore() {
-    if (editableUserScore.value !== '') {
+// Submit score and emit to parent component
+async function submitScore() {
+  if (editableUserScore.value !== null) {
     await ratingStore.rateMangaGenre(props.genreId, editableUserScore.value);
     isSubmitted.value = true;
 
@@ -93,61 +96,58 @@ import { ref, watch } from 'vue';
       isSubmitted.value = false;
     }, 1500);
   }
-  }
-  </script>
-  
-  <style scoped>
- .ranking-row{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-    /* background-color: aqua; */
-  }
-  
-  .genre-col{
-    width: 25%;
-    font-size: 20px;
-    /* background-color: red; */
-  }
-  
-  .overall-col{
-    width: 30%;
-    font-size: 20px;
-    /* background-color: blue; */
-  }
-  
-  .user-col{
-    width: 16%;
-    font-size: 18px;
-    justify-content: center;
-    background-color: #515552;
-    border-radius: 0 5px 5px 0;
-    margin: auto 0;
-  }
-  
-  .score-holder{
-    width: 80%;
-    padding: 5px 0;
-    margin-left: auto;
-    text-align: center;
-    background-color: #D89831;
-    border-radius: 5px;
-  }
-  .user-score-holder{
-    width: 100%;
-    padding: 2px 0;
-    text-align: center;
-    background-color: #515552;
-    border-radius: 0 5px 5px 0;
-  }
+}
+</script>
 
-.user-col.submitted .editable-score {
+<style scoped>
+.ranking-row {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 42;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.genre-col {
+  width: 25%;
+  font-size: 20px;
+}
+
+.overall-col {
+  width: 30%;
+  font-size: 20px;
+}
+
+.user-col {
+  top: 50%;
+  font-size: 18px;
+  height: 34px;
+  justify-content: center;
+  background-color: #515552;
+  border-radius: 0 5px 5px 0;
+  
+}
+
+.score-holder {
+  font-size: 1.3rem;
+  width: 80%;
+  height: 40px;
+  padding: 5px 0;
+  margin-left: auto;
+  text-align: center;
+  background-color: #d89831;
+  border-radius: 5px;
+}
+
+.user-col.submitted {
   background-color: #e0f7fa; /* Slight color change on submit */
 }
-/* Remove the up and down arrows for number input */
+
 .editable-score {
-  width: 50px;
+  width: 120px;
   text-align: center;
   border: none;
   background: transparent;
@@ -155,20 +155,12 @@ import { ref, watch } from 'vue';
   padding: 5px;
   font-size: 16px;
   outline: none;
-  -moz-appearance: textfield;  /* Firefox */
-  -webkit-appearance: none;    /* Safari and Chrome */
-  appearance: none;            /* Standard for other browsers */
+  --p-inputtext-background: transparent;
+  --p-inputnumber-button-background:transparent;
+  --p-inputnumber-button-hover-background:transparent;
 }
 
-.editable-score::-webkit-outer-spin-button,
-.editable-score::-webkit-inner-spin-button {
-  -webkit-appearance: none;   /* Remove the spinner in Chrome and Safari */
-  margin: 0;
+.submit-btn {
+  margin-top: 10px;
 }
-
-.editable-score[type="number"] {
-  -moz-appearance: textfield;  /* Remove spinner in Firefox */
-}
-
-  </style>
-  
+</style>
