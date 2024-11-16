@@ -1,65 +1,115 @@
 <template>
-  <header class="header">
+  <div class="header">
     <div class="container">
-      <h1 class="title">MangaMeter</h1>
-      <nav class="navigation">
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/database">Database</RouterLink>
-      </nav>
-      <div class="auth-buttons">
-        <button label="Login" @click="openLogin" class="p-button-outlined" />
-        <button label="Sign Up" @click="openSignup" class="p-button-outlined" />
+      <div class="title">
+        <h1 class="logo font_roboto">MangaMeter</h1>
       </div>
+      <TabMenu :model="items" class="tabbar">
+          <template #item="{ item, props }">
+              <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+                  <a v-ripple :href="href" v-bind="props.action" @click="navigate">
+                      <span v-bind="props.icon" />
+                      <span v-bind="props.label">{{ item.label }}</span>
+                  </a>
+              </router-link>
+              <a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
+                  <span v-bind="props.icon" />
+                  <span v-bind="props.label">{{ item.label }}</span>
+              </a>
+          </template>
+      </TabMenu>
+      <div class="spacer"></div>
+      <AccountButton />
     </div>
-  </header>
+
+  </div>
 </template>
-
 <script setup>
+import { ref, watch  } from 'vue';
+import { useAccountStore } from '@/stores/AccountStore'; // Import account store
+import { useRouter } from 'vue-router'; // Import Vue Router for navigation
+import AccountButton from './AccountButton.vue';
+import TabMenu from 'primevue/tabmenu';
 
-function openLogin() {
-  // Logic to open the login popup
-  console.log('Login button clicked');
-}
 
-function openSignup() {
-  // Logic to open the signup popup
-  console.log('Sign Up button clicked');
+// Account store for user authentication state
+const accountStore = useAccountStore();
+const router = useRouter();
+
+const showLoginPopup = ref(false); // Boolean to control login popup visibility
+
+
+
+const items = ref([
+    { route: '/', label: 'HomePage', icon: 'pi pi-home' },
+    { route: '/search', label: 'Search', icon: 'pi pi-search' },
+    { route: '/leaderboard', label: 'Leaderboard', icon: 'pi pi-chart-bar' }
+]);
+watch(
+  () => accountStore.isLoggedIn,
+  (isLoggedIn) => {
+    const favoriteRoute = { route: '/favorite', label: 'Favorite', icon: 'pi pi-heart' };
+    if (isLoggedIn) {
+      // Add the 'Favorite' tab if the user is logged in
+      if (!items.value.find(item => item.route === '/favorite')) {
+        items.value.push(favoriteRoute);
+      }
+    } else {
+      // Remove the 'Favorite' tab if the user is logged out
+      items.value = items.value.filter(item => item.route !== '/favorite');
+    }
+  },
+  { immediate: true } // Run the watcher immediately to set the initial state
+);
+// Handle authenticated event from the popup
+function handleAuthenticated() {
+  showLoginPopup.value = false; // Close the popup on successful login
 }
 </script>
 
 <style scoped>
+.font_roboto {
+  font-family: 'Roboto', sans-serif;
+}
+
 .header {
-  position: fixed; /* Sticks the header to the top */
   top: 0;
   left: 0;
-  width: 100%; /* Full width */
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #ccc;
-  z-index: 1000; /* Ensures the header stays above other content */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for a subtle effect */
+  width: 100%;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .container {
+  height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  max-width: 1200px; /* Optional max width */
-  margin: 0 auto; /* Centers the content inside the header */
+  margin: 0 auto;
+  padding: 10px 20px;
 }
 
-.title {
+.title .logo {
+  color: #FFFFFF;
   font-size: 1.5rem;
   font-weight: bold;
+  cursor: pointer;
 }
 
-.navigation {
-  display: flex;
-  gap: 1rem;
+.navigation-tabs {
+  flex: 1;
+  margin-left: 20px;
 }
 
-.auth-buttons {
+.navigation-tabs .p-tabmenu-nav {
   display: flex;
-  gap: 0.5rem;
+  justify-content: space-around;
 }
+
+.tabbar {
+  padding-left: 20px;
+  --p-tabmenu-tablist-background: transparent; /* Set to transparent */
+}
+.spacer{flex:1}
 </style>
+
