@@ -4,7 +4,7 @@
       <div class="title">
         <h1 class="logo font_roboto">MangaMeter</h1>
       </div>
-      <TabMenu :model="items" class="tabbar">
+      <TabMenu :model="items" class="tabbar" :activeItem="activeItem">
           <template #item="{ item, props }">
               <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
                   <a v-ripple :href="href" v-bind="props.action" @click="navigate">
@@ -25,9 +25,9 @@
   </div>
 </template>
 <script setup>
-import { ref, watch  } from 'vue';
+import { ref, watch,computed   } from 'vue';
 import { useAccountStore } from '@/stores/AccountStore'; // Import account store
-import { useRouter } from 'vue-router'; // Import Vue Router for navigation
+import { useRouter, useRoute } from 'vue-router'; // Import Vue Router for navigation
 import AccountButton from './AccountButton.vue';
 import TabMenu from 'primevue/tabmenu';
 
@@ -35,6 +35,7 @@ import TabMenu from 'primevue/tabmenu';
 // Account store for user authentication state
 const accountStore = useAccountStore();
 const router = useRouter();
+const route = useRoute();
 
 const showLoginPopup = ref(false); // Boolean to control login popup visibility
 
@@ -59,12 +60,21 @@ watch(
       items.value = items.value.filter(item => item.route !== '/favorite');
     }
   },
+  () => route.path,
+  () => {
+    // Trigger reactivity by updating activeItem
+    activeItem.value = items.value.find(item => item.route === route.path);
+  },
   { immediate: true } // Run the watcher immediately to set the initial state
 );
 // Handle authenticated event from the popup
 function handleAuthenticated() {
   showLoginPopup.value = false; // Close the popup on successful login
 }
+// Computed property to determine the active tab based on the current route
+const activeItem = computed(() => {
+  return items.value.find(item => item.route === route.path) || null;
+});
 </script>
 
 <style scoped>

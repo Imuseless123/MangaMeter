@@ -25,7 +25,7 @@ export const useAccountStore = defineStore('account', () => {
         console.error('Login error:', error.message);
       } else {
         user.value = data.user; // Store user info in the store
-        console.log('Login :'+data.user);
+        console.log('Login :'+data.user.id);
       }
     } catch (err) {
       console.error('Login error:', err.message);
