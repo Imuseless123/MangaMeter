@@ -76,7 +76,7 @@
           genreId: props.genreId,
           limit: 10,
           page: currentPage.value,
-          sortDescending: 1
+          sortDescending: 'desc'
         }
       });
       console.log(response);
