@@ -6,7 +6,7 @@
       <div class="hero-content">
         <h1>Discover Your Next Favorite Manga</h1>
         <p class="hero-tagline">Not all genres are created equal—rate and explore manga</p>
-        <Button class="explore-button p-button p-button-raised" @click="startExploring">Start Exploring</Button>
+   
       </div>
     </section>
   </div>
