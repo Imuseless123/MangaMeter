@@ -6,6 +6,9 @@ export const API_ENDPOINTS = {
   GET_USER_MANGA_RATING: '/user/ratings/manga/get',
   POST_USER_RATING: '/manga/ratings/add',
   GET_MANGA_GENRE: '/genres/ratings/get',
-  GET_USER_FAVORITE_MANGA: '/user/favorites/get'
+  GET_USER_FAVORITE_MANGA: '/user/favorites/get',
+  GET_USER_MANGA_FAVORITE_STATUS: '/user/favorites/manga/get',
+  POST_USER_MANGA_FAVORITE: '/user/favorites/manga/add',
+  DELETE_USER_MANGA_FAVORITE: '/user/favorites/manga/delete'
 };
 
