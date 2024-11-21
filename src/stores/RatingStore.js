@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios'; 
 import { useAccountStore } from '@/stores/AccountStore';
+import {API_BASE_URL ,API_ENDPOINTS } from '@/ultis/apiConfig'
 
 
 export const useRatingStore = defineStore('rating', {
@@ -25,7 +26,7 @@ export const useRatingStore = defineStore('rating', {
     async getMangaPublicRatings(mangaId){
       try {
         // Fetch the average ratings for the selected manga
-        const response = await axios.get(`https://mangameterapi.littlebutenough.com/getAverMRating?mangaId=${mangaId}`);
+        const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_AVERAGE_MANGA_RATING}?mangaId=${mangaId}`);
         // Save the response data (ratings) to the store
         if (response.data && response.data.data) {
           this.mangaPublicRatings = response.data.data;;
@@ -40,7 +41,7 @@ export const useRatingStore = defineStore('rating', {
     },
     async getMangaUserRating(mangaId,userId){
       try {
-        const userResponse = await axios.get(`https://mangameterapi.littlebutenough.com/rating/manga/user?mangaId=${mangaId}&userId=${userId}`);
+        const userResponse = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_USER_MANGA_RATING}?mangaId=${mangaId}&userId=${userId}`);
         this.userRatings = userResponse.data || [];
         console.log("User rate: "+JSON.stringify(this.userRatings));
         
@@ -58,10 +59,9 @@ export const useRatingStore = defineStore('rating', {
         console.error("User is not logged in. Cannot submit rating.");
         return;
       }
-      console.log(`https://mangameterapi.littlebutenough.com/addRating?mangaId=${this.selectedManga.id}&genre=${genreId}&userId=${userId}&rating=${score}`);
       try {
         // Send the user's rating for the genre to the backend
-      const response = await axios.get(`https://mangameterapi.littlebutenough.com/addRating?mangaId=${this.selectedManga.id}&genre=${genreId}&userId=${userId}&rating=${score}`);
+      const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.POST_USER_RATING}?mangaId=${this.selectedManga.id}&genre=${genreId}&userId=${userId}&rating=${score}`);
         console.log(response);
         if (response.status === 200) {
           console.log("Rating submitted successfully:", response.data);

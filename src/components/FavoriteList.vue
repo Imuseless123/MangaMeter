@@ -52,6 +52,8 @@
   import MangaSearchEntry from './MangaSearchEntry.vue';
   import { useRatingStore } from '@/stores/RatingStore';
   import { useAccountStore } from '@/stores/AccountStore';
+  import {API_BASE_URL ,API_ENDPOINTS } from '@/ultis/apiConfig'
+
 
 const mangasPerPage = 10;
   const selectedMangaIndex = ref(null);
@@ -70,7 +72,7 @@ const mangasPerPage = 10;
   
     console.log(accountStore.user.id);
     try {
-      const response = await axios.get(`https://mangameterapi.littlebutenough.com/getFavoriteManga`, {
+      const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_USER_FAVORITE_MANGA}`, {
         params: {
             userId: accountStore.user.id,
           limit: mangasPerPage,

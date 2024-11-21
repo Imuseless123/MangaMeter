@@ -57,6 +57,7 @@
   import MangaSearchEntry from './MangaSearchEntry.vue';
   import { useRatingStore } from '@/stores/RatingStore';
   import { defineProps } from 'vue';
+  import {API_BASE_URL ,API_ENDPOINTS } from '@/ultis/apiConfig'
   const props = defineProps({
   genreId: String,
 
@@ -74,9 +75,9 @@ const mangasPerPage = 10;
   });
   const fetchMangas = async () => {
     isLoading.value = true;
-  
+    console.log(`${API_BASE_URL}${API_ENDPOINTS.GET_MANGA_GENRE}`);
     try {
-      const response = await axios.get(`https://mangameterapi.littlebutenough.com/getAverGRating/`, {
+      const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_MANGA_GENRE}`, {
         params: {
           genreId: props.genreId,
           limit: mangasPerPage,

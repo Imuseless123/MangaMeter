@@ -77,6 +77,7 @@ import axios from 'axios';
 import MangaSearchEntry from './MangaSearchEntry.vue';
 import { useRatingStore } from '@/stores/RatingStore';
 import AutoComplete from 'primevue/autocomplete';
+import { API_BASE_URL, API_ENDPOINTS } from '@/ultis/apiConfig';
 const mangaSuggestions = ref([]);
 const selectedMangaIndex = ref(null);
 const selectedManga = ref(null);
@@ -94,7 +95,8 @@ const fetchMangas = async () => {
   isLoading.value = true;
 
   try {
-    const response = await axios.get(`https://mangameterapi.littlebutenough.com/manga/search/`, {
+  console.log(API_BASE_URL);
+    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_MANGA}`, {
       params: {
         title: searchTerm.value,
         limit: 10,
