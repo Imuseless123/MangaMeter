@@ -14,7 +14,6 @@
       >
         {{ genre.name }}
       </LeaderboardPanel>
-      <span v-for="(genre, index) in genres">test</span>
       
     </div>
     <Button class="overlay-button" @click="toggleOverlay">Genres ></Button>

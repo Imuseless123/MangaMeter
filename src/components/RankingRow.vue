@@ -13,17 +13,17 @@
 
     <!-- User Score Column (conditionally rendered) -->
     <div v-if="isLoggedIn" class="user-col" :class="{ 'submitted': isSubmitted }">
-      <InputNumber
+      <Dropdown
         v-model="editableUserScore"
-        :min="1"
-        :max="10"
-        showButtons
-        placeholder="_"
-        @keypress.enter="submitScore"
+        :options="scoreOptions"
+        optionLabel="label"
+        placeholder="Select a score"
         class="editable-score"
-        inputStyle="width: 120px; padding:6px 40px 6px; height: 100%; font-size: 1.2rem; border: 0px"
-        style="padding:0px 0px 0px; display: flex;"
-      />
+        style="  border: 0px"
+        @change="submitScore"
+      >
+      </Dropdown>
+      
     </div>
     <Toast />
   </div>
@@ -34,7 +34,8 @@ import { ref, watch } from 'vue';
 import { defineProps } from 'vue';
 import { useRatingStore } from '@/stores/RatingStore';
 import InputNumber from 'primevue/inputnumber';
-import Button from 'primevue/button';
+import Dropdown from 'primevue/dropdown';
+
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
@@ -69,6 +70,19 @@ const props = defineProps({
 const ratingStore = useRatingStore();
 const isSubmitted = ref(false);
 const editableUserScore = ref(null);
+const scoreOptions = [
+  { label: "10 (Best)", value: 10 },
+  { label: "9 (Great)", value: 9 },
+  { label: "8 (Good)", value: 8 },
+  { label: "7 (Fair)", value: 7 },
+  { label: "6 (OK)", value: 6 },
+  { label: "5 (Mid)", value: 5 },
+  { label: "4 (Poor)", value: 4 },
+  { label: "3 (Bad)", value: 3 },
+  { label: "2 (Worse)", value: 2 },
+  { label: "1 (Trash)", value: 1 },
+];
+
 
 watch(
   () => props.userScore,
@@ -76,7 +90,9 @@ watch(
     // Only update `editableUserScore` if the user hasn't just submitted a score
     if (!isSubmitted.value) {
       if (newUserScore !== 'empty') {
-        editableUserScore.value = newUserScore;
+        // Map the number to the corresponding scoreOption object
+        const matchedOption = scoreOptions.find(option => option.value === newUserScore);
+        editableUserScore.value = matchedOption || null; // Set to null if no match is found
       } else {
         editableUserScore.value = null; // If no user score, make it editable
       }
@@ -90,14 +106,14 @@ async function submitScore() {
   if (editableUserScore.value !== null) {
     try {
       isSubmitted.value = true; // Prevent interference during submission
-      await ratingStore.rateMangaGenre(props.genreId, editableUserScore.value);
+      await ratingStore.rateMangaGenre(props.genreId, editableUserScore.value.value);
 
 
       // Show success toast message
       toast.add({
         severity: "success",
         summary: "Score Submitted",
-        detail: `Your score of ${editableUserScore.value} has been recorded.`,
+        detail: `Your score of ${editableUserScore.value.value} has been recorded.`,
         life: 3000,
       });
     } catch (error) {
@@ -164,12 +180,11 @@ async function submitScore() {
 }
 
 .editable-score {
-  width: 120px;
+  width: 140px;
   text-align: center;
   border: none;
   background: transparent;
   color: #000;
-  padding: 5px;
   font-size: 16px;
   outline: none;
   --p-inputtext-background: transparent;

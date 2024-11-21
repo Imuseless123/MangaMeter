@@ -2,7 +2,6 @@
     <div class="background-container">
   <div v-if="mangas.length > 0" class="fade-left"></div>
     </div>
-    
     <div class="container">
     
     <div class="result-container">
@@ -29,10 +28,7 @@
       </div>
   
       <div class="rectangle-list">
-        <div v-for="(manga, index) in mangas" class="rank-result-row" >
-          <span class="rank-number">#{{ calculateRank(index) }}</span>
-
-          <MangaSearchEntry 
+        <MangaSearchEntry v-for="(manga, index) in mangas"
             :key="index" 
             :name="manga.mangaName" 
             :image="`https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`" 
@@ -42,7 +38,6 @@
             class="MangaSearchEntry"
 
         />
-        </div>
       </div>
       </div>
       
@@ -56,17 +51,16 @@
   import axios from 'axios';
   import MangaSearchEntry from './MangaSearchEntry.vue';
   import { useRatingStore } from '@/stores/RatingStore';
-  import { defineProps } from 'vue';
+  import { useAccountStore } from '@/stores/AccountStore';
   import {API_BASE_URL ,API_ENDPOINTS } from '@/ultis/apiConfig'
-  const props = defineProps({
-  genreId: String,
 
-});
+
 const mangasPerPage = 10;
   const selectedMangaIndex = ref(null);
   const selectedManga = ref(null);
   const mangas = ref([]);
   const ratingStore = useRatingStore();
+  const accountStore = useAccountStore();
   const currentPage = ref(1);
   const total = ref(0);
   const isLoading = ref(false); 
@@ -75,17 +69,17 @@ const mangasPerPage = 10;
   });
   const fetchMangas = async () => {
     isLoading.value = true;
-    console.log(`${API_BASE_URL}${API_ENDPOINTS.GET_MANGA_GENRE}`);
+  
+    console.log(accountStore.user.id);
     try {
-      const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_MANGA_GENRE}`, {
+      const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_USER_FAVORITE_MANGA}`, {
         params: {
-          genreId: props.genreId,
+            userId: accountStore.user.id,
           limit: mangasPerPage,
           page: currentPage.value,
-          sortDescending: 'desc'
         }
       });
-      console.log(response);
+      console.log("Favorite respone: " +response);
   
       mangas.value = response.data.data;
       total.value =  response.data.total;
@@ -142,7 +136,6 @@ const mangasPerPage = 10;
   };
 
   onMounted(async () => {
-    console.log(props.genreId);
 
     fetchMangas();
   });
@@ -308,18 +301,6 @@ const mangasPerPage = 10;
     width: 100%;
     position: absolute;
   }
-  .rank-number {
-  font-weight: bold;
-  margin: 20px;
-  color: var(--primary-color); /* Use your theme's primary color */
-  font-size: 1.2rem;
-}
-.rank-result-row{
-  display: flex;
-  flex-direction: row;
-}
-.MangaSearchEntry{
-  flex: 1;
-}
+
   </style>
   

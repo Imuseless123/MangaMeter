@@ -6,7 +6,12 @@
       alt="Manga Cover" 
       class="manga-image" 
     />
-    
+    <Button
+      :icon="isFavorite ? 'pi pi-star-fill' : 'pi pi-star'"
+      severity="secondary" rounded size='large'
+      class="favorite-button"
+      @click="toggleFavorite"
+    />
     <div class="overlay">
       <div class="manga-info">
         <!-- Manga Title with smooth fade-in -->
@@ -38,14 +43,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed,watch } from 'vue';
 import { useRatingStore } from '@/stores/RatingStore';
 import { useAccountStore } from '@/stores/AccountStore';
 import RankingRow from './RankingRow.vue';
+import Button from "primevue/button";
+import { API_BASE_URL, API_ENDPOINTS } from '@/ultis/apiConfig';
+import axios from 'axios';
 
 const ratingStore = useRatingStore();
 const accountStore = useAccountStore();
 const isMobile = ref(false);
+const isFavorite = ref(false);
 
 // Use computed property to get the selected manga
 const selectedManga = computed(() => ratingStore.selectedManga);
@@ -75,17 +84,72 @@ const getUserScore = (genreId) => {
 const updateIsMobile = () => {
   isMobile.value = window.innerWidth <= 1200;
 };
-
 // Set up event listeners on mount, remove on unmount
 onMounted(() => {
   updateIsMobile();
   window.addEventListener('resize', updateIsMobile);
+  watch([selectedManga, accountStore.user], (newVal, oldVal) => {
+    if (selectedManga.value && accountStore.user.id) {
+      checkFavorite();  // Check if manga is a favorite once both values are available
+    }
+  }, { immediate: true }); 
 });
 
 onUnmounted(() => {
   window.removeEventListener('resize', updateIsMobile);
 });
 
+const checkFavorite = async () => {
+  const mangaId = selectedManga.value.id;
+  const userId = accountStore.user.id;
+
+  if (!mangaId || !userId) return;  // Make sure we have both mangaId and userId
+
+  try {
+    // Call the API to check if the manga is already favorited
+    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_USER_MANGA_FAVORITE_STATUS}`, {
+        params: {
+          mangaId: mangaId,
+          userId: userId,
+        }
+      });
+    isFavorite.value = response.data;  // Update the favorite state based on response
+  } catch (error) {
+    console.error('Error while checking favorite status:', error);
+  }
+};
+
+const toggleFavorite = async () => {
+  const mangaId = selectedManga.value.id;
+  const userId = accountStore.user.id;
+
+  if (!mangaId || !userId) return;  // Make sure we have both mangaId and userId
+
+  try {
+    // Check if the manga is already favorited
+    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_USER_MANGA_FAVORITE_STATUS}`, {
+        params: {
+          mangaId: mangaId,
+          userId: userId,
+        }
+      });
+    const isFavorited = response.data;
+
+    // If it is favorited, remove it, otherwise add it
+    if (isFavorited) {
+      // Call the API to remove it from favorites
+      await axios.delete(`${API_BASE_URL}${API_ENDPOINTS.DELETE_USER_MANGA_FAVORITE}?mangaId=${mangaId}&userId=${userId}`);
+      isFavorite.value = false;  // Update local state
+    } else {
+      // Call the API to add it to favorites
+      console.log(`${API_BASE_URL}${API_ENDPOINTS.POST_USER_MANGA_FAVORITE}?mangaId=${mangaId}&userId=${userId}`)
+      await axios.post(`${API_BASE_URL}${API_ENDPOINTS.POST_USER_MANGA_FAVORITE}?mangaId=${mangaId}&userId=${userId}`);
+      isFavorite.value = true;  // Update local state
+    }
+  } catch (error) {
+    console.error('Error while toggling favorite:', error);
+  }
+};
 </script>
 
 <style scoped>
@@ -196,4 +260,13 @@ onUnmounted(() => {
     width: 100%;
   }
 }
+.favorite-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  --p-button-secondary-color: var(--p-amber-400);
+  --p-button-secondary-hover-color: var(--p-amber-300);
+
+} 
+
 </style>

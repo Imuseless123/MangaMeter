@@ -55,7 +55,7 @@ const fetchTopThree = async () =>{
           genreId: props.genreId,
           limit: 3,
           page: 1,
-          sortDescending: 1
+          sortDescending: 'desc'
         }
       });
       console.log(response);

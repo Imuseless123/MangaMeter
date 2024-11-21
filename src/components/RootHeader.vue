@@ -4,7 +4,7 @@
       <div class="title">
         <h1 class="logo font_roboto">MangaMeter</h1>
       </div>
-      <TabMenu :model="items" class="tabbar">
+      <TabMenu :model="items" class="tabbar" v-model:activeItem="activeItem">
           <template #item="{ item, props }">
               <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
                   <a v-ripple :href="href" v-bind="props.action" @click="navigate">
@@ -21,30 +21,33 @@
       <div class="spacer"></div>
       <AccountButton />
     </div>
-
   </div>
 </template>
+
 <script setup>
-import { ref, watch  } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useAccountStore } from '@/stores/AccountStore'; // Import account store
-import { useRouter } from 'vue-router'; // Import Vue Router for navigation
+import { useRouter, useRoute } from 'vue-router'; // Import Vue Router for navigation
 import AccountButton from './AccountButton.vue';
 import TabMenu from 'primevue/tabmenu';
-
 
 // Account store for user authentication state
 const accountStore = useAccountStore();
 const router = useRouter();
+const route = useRoute();
 
 const showLoginPopup = ref(false); // Boolean to control login popup visibility
-
-
 
 const items = ref([
     { route: '/', label: 'HomePage', icon: 'pi pi-home' },
     { route: '/search', label: 'Search', icon: 'pi pi-search' },
     { route: '/leaderboard', label: 'Leaderboard', icon: 'pi pi-chart-bar' }
 ]);
+
+// Ref for the active tab
+const activeItem = ref(null);
+
+// Watch user authentication state and update the tab items
 watch(
   () => accountStore.isLoggedIn,
   (isLoggedIn) => {
@@ -59,8 +62,19 @@ watch(
       items.value = items.value.filter(item => item.route !== '/favorite');
     }
   },
-  { immediate: true } // Run the watcher immediately to set the initial state
+  { immediate: true } // Run the watcher immediately
 );
+
+// Watch route changes and update the active tab
+watch(
+  () => route.path, // Watch for changes in the route path
+  (newPath) => {
+    console.log("Path changed to:", newPath);
+    activeItem.value = items.value.find(item => item.route === newPath) || null;
+  },
+  { immediate: true } // Set the active tab on component initialization
+);
+
 // Handle authenticated event from the popup
 function handleAuthenticated() {
   showLoginPopup.value = false; // Close the popup on successful login
