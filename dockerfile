@@ -1,7 +1,11 @@
-FROM nginx:latest
+FROM node:latest as build-stage
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY ./ .
+RUN npm run build
 
-# Copy static website files
-COPY dist/ /usr/share/nginx/html
-
-# Copy the custom Nginx configuration
+FROM nginx as production-stage
+RUN mkdir /app
+COPY --from=build-stage /app/dist /app
 COPY nginx.conf /etc/nginx/nginx.conf
