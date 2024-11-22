@@ -125,7 +125,7 @@ const mangasPerPage = 10;
     ratingStore.setSelectedManga({
       id: manga.mangaId,
       name: manga.mangaName,
-      image: `https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`,
+      image: `${API_BASE_URL}${API_ENDPOINTS.GET_COVER_ART}?mangaId=${manga.mangaId}&coverFileName=${manga.coverFileName}`,
       genres: manga.genreTags,
     });
     await nextTick(() => {
