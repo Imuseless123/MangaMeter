@@ -31,7 +31,7 @@
         <MangaSearchEntry v-for="(manga, index) in mangas"
             :key="index" 
             :name="manga.mangaName" 
-            :image="`https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`" 
+            :image="`${API_BASE_URL}${API_ENDPOINTS.GET_COVER_ART}?mangaId=${manga.mangaId}&coverFileName=${manga.coverFileName}`" 
             :genres="manga.genreTags" 
             :isSelected="selectedMangaIndex === index" 
             @selectManga="selectManga(index)"
