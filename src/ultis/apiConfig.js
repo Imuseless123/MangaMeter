@@ -9,6 +9,11 @@ export const API_ENDPOINTS = {
   GET_USER_FAVORITE_MANGA: '/user/favorites/get',
   GET_USER_MANGA_FAVORITE_STATUS: '/user/favorites/manga/get',
   POST_USER_MANGA_FAVORITE: '/user/favorites/manga/add',
-  DELETE_USER_MANGA_FAVORITE: '/user/favorites/manga/delete'
+  DELETE_USER_MANGA_FAVORITE: '/user/favorites/manga/delete',
+  GET_GENRE: '/genres/get',
+  GET_COVER_ART:'/manga/art/get',
+  GET_MANGA_SUGGESTION:'/manga/suggestion/get',
+  GET_MANGA_GENRE_RATING:'/genres/ratings/get'
+
 };
 

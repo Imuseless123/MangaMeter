@@ -32,6 +32,7 @@ import { defineProps, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import Button from 'primevue/button';
+import { API_BASE_URL, API_ENDPOINTS } from '@/ultis/apiConfig';
 
 const topManga = ref('');
 const secondManga = ref('');
@@ -50,7 +51,7 @@ const goToLeaderboardDetail = () => {
 
 const fetchTopThree = async () =>{
   try {
-      const response = await axios.get(`https://mangameterapi.littlebutenough.com/getAverGRating/`, {
+      const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_MANGA_GENRE_RATING}`, {
         params: {
           genreId: props.genreId,
           limit: 3,
@@ -62,7 +63,7 @@ const fetchTopThree = async () =>{
       const mangas = response.data.data;
       if (mangas.length > 0) {
         topManga.value = mangas[0].mangaName || '';
-        topMangaCoverUrl.value = `https://uploads.mangadex.org/covers/${mangas[0].mangaId}/${mangas[0].coverFileName}`;
+        topMangaCoverUrl.value = `${API_BASE_URL}${API_ENDPOINTS.GET_COVER_ART}?mangaId=${mangas[0].mangaId}&coverFileName=${mangas[0].coverFileName}`;
       }
       if (mangas.length > 1) secondManga.value = mangas[1].mangaName || '';
       if (mangas.length > 2) thirdManga.value = mangas[2].mangaName || '';
