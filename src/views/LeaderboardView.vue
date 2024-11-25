@@ -44,11 +44,12 @@ const searchQuery = ref('');
 const selectedIndex = ref(null);
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
+import { API_BASE_URL, API_ENDPOINTS } from '@/ultis/apiConfig';
 
 
 const fetchGenres = async () => {
   try {
-    const response = await axios.get('https://mangameterapi.littlebutenough.com/genres');
+    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.GET_GENRE}`);
     genres.value = response.data.map(item => ({
       id: item.id,
       name: item.name

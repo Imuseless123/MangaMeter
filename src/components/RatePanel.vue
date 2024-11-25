@@ -7,6 +7,7 @@
       class="manga-image" 
     />
     <Button
+      v-if="accountStore.user"
       :icon="isFavorite ? 'pi pi-star-fill' : 'pi pi-star'"
       severity="secondary" rounded size='large'
       class="favorite-button"
@@ -89,7 +90,7 @@ onMounted(() => {
   updateIsMobile();
   window.addEventListener('resize', updateIsMobile);
   watch([selectedManga, accountStore.user], (newVal, oldVal) => {
-    if (selectedManga.value && accountStore.user.id) {
+    if (selectedManga.value && accountStore.user?.id) {
       checkFavorite();  // Check if manga is a favorite once both values are available
     }
   }, { immediate: true }); 

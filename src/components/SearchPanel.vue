@@ -58,7 +58,7 @@
           v-for="(manga, index) in mangas" 
           :key="index" 
           :name="manga.mangaName" 
-          :image="`https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`" 
+          :image="`${API_BASE_URL}${API_ENDPOINTS.GET_COVER_ART}?mangaId=${manga.mangaId}&coverFileName=${manga.coverFileName}`" 
           :genres="manga.genreTags" 
           :isSelected="selectedMangaIndex === index" 
           @selectManga="selectManga(index)"
@@ -151,7 +151,7 @@ const selectManga = async (index) => {
   ratingStore.setSelectedManga({
     id: manga.mangaId,
     name: manga.mangaName,
-    image: `https://uploads.mangadex.org/covers/${manga.mangaId}/${manga.coverFileName}`,
+    image: `${API_BASE_URL}${API_ENDPOINTS.GET_COVER_ART}?mangaId=${manga.mangaId}&coverFileName=${manga.coverFileName}`,
     genres: manga.genreTags,
   });
   await nextTick(() => {
@@ -166,7 +166,7 @@ const searchMangas = async (event) => {
 
   if (query.length >= 3) { // Trigger search after 3 characters
     try {
-      const response = await fetch(`https://api.mangadex.org/manga?limit=5&title=${query}&includedTagsMode=AND&excludedTagsMode=OR&contentRating%5B%5D=safe&contentRating%5B%5D=suggestive&contentRating%5B%5D=erotica&order%5BlatestUploadedChapter%5D=desc`);
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.GET_MANGA_SUGGESTION}?query=${query}`);
       const data = await response.json();
 
       // Extract the titles from the response and populate the suggestions
