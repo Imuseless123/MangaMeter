@@ -11,7 +11,6 @@ import { definePreset } from '@primevue/themes';
 import 'primeicons/primeicons.css';
 import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";   
-
 const MyPreset = definePreset(Aura, {
     semantic: {
         primary: {
@@ -26,6 +25,9 @@ const MyPreset = definePreset(Aura, {
             800: '#d07423',
             900: '#d07423',
             950: '#d07423'
+        },
+        colorScheme: {
+            light: Aura.semantic.colorScheme.dark,
         }
         
     },

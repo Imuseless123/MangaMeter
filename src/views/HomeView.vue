@@ -3,9 +3,9 @@
     <div class="background-image"></div>
     <div class="background-overlay"></div>
     <section class="hero">
-      <div class="hero-content">
-        <h1>Discover Your Next Favorite Manga</h1>
-        <p class="hero-tagline">Not all genres are created equal—rate and explore manga</p>
+      <div class="hero-content" style="color: #f9f9f9;">
+        <h1>Manga, Rated Right.</h1>
+        <p class="hero-tagline">Because Every Manga Genre Deserves the Spotlight.</p>
    
       </div>
     </section>
@@ -15,7 +15,6 @@
 </template>
 
 <script setup>
-import { Button } from 'primevue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 function startExploring() {
